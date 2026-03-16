@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Santri Quest — Shadow System</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@300;400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void:#000005;--abyss:#05020f;--shadow:#0a0518;--panel:#0d0720;--panel2:#100825;
+  --border-dark:#1a0d35;--border-mid:#2d1660;--border-bright:#5b2d9e;
+  --purple:#7c3aed;--purple-light:#a855f7;--purple-glow:#c084fc;
+  --ice-blue:#67e8f9;--ice-bright:#a5f3fc;
+  --gold:#f59e0b;--gold-bright:#fbbf24;
+  --crimson:#dc2626;--crimson-glow:#ef4444;
+  --emerge:#4ade80;
+  --text-bright:#f0e6ff;--text-mid:#9d7ec9;--text-dim:#3d2060;
+  --glow-purple:0 0 20px rgba(168,85,247,.7),0 0 40px rgba(124,58,237,.3);
+  --glow-ice:0 0 15px rgba(103,232,249,.6);
+  --glow-gold:0 0 15px rgba(245,158,11,.7);
+  --glow-red:0 0 15px rgba(220,38,38,.7);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--void);color:var(--text-bright);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow-x:hidden;}
+
+.bg-void{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 80% 50% at 20% 50%,rgba(124,58,237,.12) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 20%,rgba(103,232,249,.05) 0%,transparent 50%),var(--void);}
+.rune-particles{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;}
+.rune-particles::before,.rune-particles::after{content:'';position:absolute;width:2px;height:2px;border-radius:50%;background:var(--purple-light);
+  box-shadow:120px 80px 0 rgba(168,85,247,.8),250px 200px 0 rgba(103,232,249,.5),400px 100px 0 rgba(168,85,247,.4),600px 300px 0 rgba(103,232,249,.6),750px 150px 0 rgba(168,85,247,.7),900px 400px 0 rgba(103,232,249,.3),1100px 80px 0 rgba(168,85,247,.5),1300px 250px 0 rgba(103,232,249,.4),80px 500px 0 rgba(168,85,247,.3),350px 600px 0 rgba(245,158,11,.4),500px 450px 0 rgba(168,85,247,.6),700px 550px 0 rgba(103,232,249,.3),950px 480px 0 rgba(168,85,247,.5),1200px 600px 0 rgba(103,232,249,.4);
+  animation:float-p 20s ease-in-out infinite;}
+.rune-particles::after{animation-delay:-10s;box-shadow:180px 120px 0 rgba(103,232,249,.6),320px 80px 0 rgba(168,85,247,.4),450px 320px 0 rgba(103,232,249,.5),650px 200px 0 rgba(168,85,247,.7),820px 350px 0 rgba(103,232,249,.3),1050px 130px 0 rgba(168,85,247,.6),1250px 380px 0 rgba(103,232,249,.4),150px 420px 0 rgba(245,158,11,.3),420px 520px 0 rgba(168,85,247,.5),680px 480px 0 rgba(103,232,249,.4),880px 560px 0 rgba(168,85,247,.3),1100px 500px 0 rgba(103,232,249,.5);}
+@keyframes float-p{0%,100%{transform:translateY(0)}50%{transform:translateY(-30px)}}
+.scanlines{position:fixed;inset:0;z-index:9998;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px);}
+.vignette{position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,10,.7) 100%);}
+
+.app-wrapper{position:relative;z-index:10;display:flex;flex-direction:column;min-height:100vh;}
+
+/* TOP BAR */
+.top-bar{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:58px;
+  background:linear-gradient(90deg,rgba(5,2,15,.98),rgba(13,7,32,.98),rgba(5,2,15,.98));
+  border-bottom:1px solid var(--border-mid);position:relative;z-index:100;overflow:hidden;flex-shrink:0;}
+.top-bar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--purple),var(--ice-blue),var(--purple),transparent);}
+.top-logo{font-family:'Black Han Sans',sans-serif;font-size:1.4rem;letter-spacing:4px;color:var(--text-bright);text-shadow:0 0 30px rgba(168,85,247,.8);}
+.top-logo .sl-a{color:var(--ice-blue);}.top-logo .sl-b{color:var(--purple-light);font-size:1rem;}
+.top-sub{font-family:'Share Tech Mono',monospace;font-size:.52rem;color:var(--text-dim);letter-spacing:3px;display:block;margin-top:2px;}
+.top-right{display:flex;align-items:center;gap:12px;}
+.nav-btn{font-family:'Share Tech Mono',monospace;font-size:.55rem;letter-spacing:2px;padding:5px 12px;
+  background:rgba(124,58,237,.1);border:1px solid var(--border-mid);color:var(--text-mid);
+  cursor:pointer;text-decoration:none;transition:all .2s;
+  clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));}
+.nav-btn:hover,.nav-btn.active{background:rgba(124,58,237,.2);border-color:var(--purple);color:var(--purple-glow);}
+.sys-time{font-family:'Share Tech Mono',monospace;font-size:.68rem;color:var(--text-mid);letter-spacing:1px;}
+.spulse{width:7px;height:7px;border-radius:50%;background:var(--emerge);box-shadow:0 0 10px var(--emerge);animation:sp 1.5s ease-in-out infinite;display:inline-block;}
+@keyframes sp{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.5}}
+
+/* PAGES */
+.page{display:none;flex:1;}
+.page.active{display:flex;flex-direction:column;}
+
+/* MAIN LAYOUT */
+.main-content{display:grid;grid-template-columns:270px 1fr 255px;gap:12px;padding:12px 16px;flex:1;align-items:start;}
+
+/* PANEL */
+.sl-panel{background:linear-gradient(135deg,rgba(13,7,32,.97),rgba(10,5,24,.97));
+  border:1px solid var(--border-mid);position:relative;overflow:hidden;margin-bottom:12px;
+  clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));}
+.sl-panel::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:1;
+  background:linear-gradient(90deg,var(--purple) 0%,transparent 40%) top left/60px 1px no-repeat,
+    linear-gradient(180deg,var(--purple) 0%,transparent 40%) top left/1px 60px no-repeat,
+    linear-gradient(270deg,var(--purple) 0%,transparent 40%) bottom right/60px 1px no-repeat,
+    linear-gradient(0deg,var(--purple) 0%,transparent 40%) bottom right/1px 60px no-repeat;}
+.sl-panel::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse at 50% 0%,rgba(124,58,237,.07) 0%,transparent 60%);}
+.ph{display:flex;align-items:center;gap:10px;padding:8px 14px;
+  background:linear-gradient(90deg,rgba(124,58,237,.14),rgba(103,232,249,.04),transparent);
+  border-bottom:1px solid var(--border-dark);position:relative;z-index:2;}
+.ph-ico{color:var(--purple-light);font-size:.62rem;opacity:.8;}
+.ph-txt{font-family:'Share Tech Mono',monospace;font-size:.58rem;letter-spacing:4px;color:var(--purple-glow);text-transform:uppercase;}
+.ph-line{flex:1;height:1px;background:linear-gradient(90deg,var(--border-mid),transparent);}
+.ph-extras{display:flex;align-items:center;gap:8px;margin-left:auto;}
+
+/* PLAYER */
+.player-body{padding:16px 14px 12px;position:relative;z-index:2;display:flex;flex-direction:column;gap:12px;}
+.avatar-row{display:flex;align-items:center;gap:12px;}
+.avatar-wrap{position:relative;flex-shrink:0;width:76px;height:76px;}
+.avatar-box{width:76px;height:76px;background:radial-gradient(circle at 40% 35%,rgba(168,85,247,.25),rgba(5,2,15,.9));
+  border:2px solid var(--purple);border-radius:6px;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  box-shadow:var(--glow-purple),inset 0 0 30px rgba(124,58,237,.12);animation:ab 4s ease-in-out infinite;}
+.avatar-box img{width:100%;height:100%;object-fit:cover;}
+@keyframes ab{0%,100%{box-shadow:var(--glow-purple),inset 0 0 30px rgba(124,58,237,.12);}50%{box-shadow:0 0 30px rgba(168,85,247,.9),0 0 60px rgba(124,58,237,.5),inset 0 0 40px rgba(124,58,237,.22);}}
+.avatar-rank{position:absolute;top:-6px;right:-6px;background:linear-gradient(135deg,var(--gold),var(--gold-bright));
+  color:#000;font-family:'Black Han Sans',sans-serif;font-size:.65rem;width:26px;height:26px;border-radius:4px;
+  display:flex;align-items:center;justify-content:center;box-shadow:var(--glow-gold);}
+.hunter-meta{flex:1;}
+.hunter-name{font-family:'Black Han Sans',sans-serif;font-size:1rem;color:#fff;cursor:pointer;transition:all .2s;letter-spacing:1px;}
+.hunter-name:hover{color:var(--ice-blue);text-shadow:var(--glow-ice);}
+.hunter-class{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--purple-light);letter-spacing:2px;margin-top:3px;}
+.hunter-class .hc-name{color:var(--ice-blue);}
+.edit-tip{font-family:'Share Tech Mono',monospace;font-size:.5rem;color:var(--text-dim);margin-top:4px;}
+.exp-hdr{display:flex;justify-content:space-between;margin-bottom:4px;}
+.exp-lbl{font-family:'Share Tech Mono',monospace;font-size:.54rem;letter-spacing:3px;color:var(--text-mid);}
+.exp-val{font-family:'Share Tech Mono',monospace;font-size:.66rem;color:var(--gold-bright);text-shadow:var(--glow-gold);}
+.exp-track{width:100%;height:11px;background:rgba(124,58,237,.1);border:1px solid var(--border-mid);position:relative;overflow:hidden;
+  clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));}
+.exp-fill{height:100%;background:linear-gradient(90deg,#4c1d95,var(--purple),var(--purple-glow));transition:width 1s cubic-bezier(.4,0,.2,1);position:relative;z-index:1;}
+.exp-fill::after{content:'';position:absolute;top:0;right:0;bottom:0;width:40px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.5));animation:esweep 2s ease-in-out infinite;}
+@keyframes esweep{0%,100%{opacity:0}50%{opacity:1}}
+.lv-box{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding:7px 10px;
+  background:rgba(124,58,237,.07);border:1px solid var(--border-dark);
+  clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));}
+.lv-lbl{font-family:'Share Tech Mono',monospace;font-size:.54rem;letter-spacing:3px;color:var(--text-dim);}
+.lv-num{font-family:'Black Han Sans',sans-serif;font-size:1.8rem;color:var(--gold-bright);line-height:1;text-shadow:var(--glow-gold);animation:lvp 3s ease-in-out infinite;}
+@keyframes lvp{0%,100%{text-shadow:var(--glow-gold)}50%{text-shadow:0 0 25px rgba(245,158,11,.9),0 0 50px rgba(245,158,11,.4)}}
+.lv-next{font-family:'Share Tech Mono',monospace;font-size:.54rem;color:var(--text-mid);text-align:right;}
+
+/* STATS */
+.stats-body{padding:10px 14px;display:flex;flex-direction:column;gap:10px;position:relative;z-index:2;}
+.stat-row{display:flex;align-items:center;gap:10px;}
+.stat-ico{font-size:1rem;width:24px;text-align:center;flex-shrink:0;}
+.stat-data{flex:1;}
+.stat-lbl{font-family:'Share Tech Mono',monospace;font-size:.53rem;letter-spacing:2px;color:var(--text-mid);display:flex;justify-content:space-between;margin-bottom:3px;}
+.stat-num{font-size:.67rem;font-weight:700;}
+.stat-trk{width:100%;height:5px;background:rgba(255,255,255,.04);overflow:hidden;clip-path:polygon(0 0,calc(100% - 4px) 0,100% 4px,100% 100%,4px 100%,0 calc(100% - 4px));}
+.stat-fill{height:100%;width:0%;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+.sa{background:linear-gradient(90deg,#6d28d9,#c084fc);}.si{background:linear-gradient(90deg,#0e7490,#67e8f9);}
+.sd{background:linear-gradient(90deg,#92400e,#fbbf24);}.sk{background:linear-gradient(90deg,#065f46,#4ade80);}
+.ca{color:#c084fc;}.ci{color:#67e8f9;}.cd{color:#fbbf24;}.ck{color:#4ade80;}
+
+/* QUEST */
+.quest-date{font-family:'Share Tech Mono',monospace;font-size:.54rem;color:var(--text-dim);letter-spacing:1px;}
+.reset-btn{background:transparent;border:1px solid var(--border-mid);color:var(--text-mid);font-family:'Share Tech Mono',monospace;font-size:.54rem;padding:2px 8px;cursor:pointer;transition:all .2s;letter-spacing:1px;}
+.reset-btn:hover{border-color:var(--purple-light);color:var(--purple-light);}
+.quest-list{padding:8px 10px;display:flex;flex-direction:column;gap:7px;position:relative;z-index:2;}
+.quest-card{background:linear-gradient(90deg,rgba(124,58,237,.06),rgba(10,5,24,.8));
+  border:1px solid var(--border-dark);border-left:2px solid var(--purple);
+  padding:10px 12px;display:flex;align-items:center;gap:10px;transition:all .3s;
+  clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));}
+.quest-card:not(.done):not(.failed):hover{background:linear-gradient(90deg,rgba(124,58,237,.14),rgba(10,5,24,.9));border-left-color:var(--purple-glow);transform:translateX(2px);}
+.quest-card.done{border-left-color:var(--emerge);opacity:.5;}
+.quest-card.failed{border-left-color:var(--crimson);opacity:.45;background:linear-gradient(90deg,rgba(220,38,38,.06),rgba(10,5,24,.8));}
+.q-icon{font-size:1.5rem;flex-shrink:0;}
+.q-body{flex:1;}
+.q-title{font-family:'Noto Sans KR',sans-serif;font-size:.83rem;font-weight:700;color:var(--text-bright);}
+.q-desc{font-size:.64rem;color:var(--text-mid);margin-top:2px;}
+.q-rwds{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;}
+.rtag{font-family:'Share Tech Mono',monospace;font-size:.54rem;padding:1px 6px;border:1px solid;border-radius:2px;}
+.rexp{color:var(--gold-bright);border-color:rgba(245,158,11,.35);background:rgba(245,158,11,.07);}
+.ragama{color:#c084fc;border-color:rgba(192,132,252,.35);background:rgba(192,132,252,.07);}
+.rit{color:var(--ice-blue);border-color:rgba(103,232,249,.35);background:rgba(103,232,249,.07);}
+.rdis{color:var(--gold);border-color:rgba(245,158,11,.25);background:rgba(245,158,11,.05);}
+.rakhlak{color:var(--emerge);border-color:rgba(74,222,128,.35);background:rgba(74,222,128,.07);}
+.penalty-tag{color:var(--crimson-glow)!important;border-color:rgba(220,38,38,.35)!important;background:rgba(220,38,38,.07)!important;}
+.q-deadline{font-family:'Share Tech Mono',monospace;font-size:.55rem;color:var(--ice-blue);margin-top:3px;letter-spacing:1px;display:flex;align-items:center;gap:4px;text-shadow:0 0 8px rgba(103,232,249,.6);}
+.q-deadline.urgent{color:var(--crimson-glow);animation:sp 1s ease-in-out infinite;}
+.q-btn{background:linear-gradient(135deg,rgba(124,58,237,.3),rgba(103,232,249,.1));border:1px solid var(--purple);color:var(--purple-glow);
+  font-family:'Share Tech Mono',monospace;font-size:.57rem;letter-spacing:1px;padding:6px 12px;cursor:pointer;transition:all .2s;
+  white-space:nowrap;flex-shrink:0;clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));}
+.q-btn:hover{background:linear-gradient(135deg,var(--purple),rgba(103,232,249,.3));color:#fff;box-shadow:var(--glow-purple);}
+.q-done{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--emerge);letter-spacing:2px;flex-shrink:0;text-shadow:0 0 10px var(--emerge);}
+.q-failed{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--crimson-glow);letter-spacing:2px;flex-shrink:0;text-shadow:0 0 10px var(--crimson);}
+.loading-msg{text-align:center;color:var(--text-dim);font-family:'Share Tech Mono',monospace;font-size:.65rem;padding:22px;letter-spacing:2px;animation:sp 1.5s ease-in-out infinite;}
+
+/* VIOLATIONS */
+.viol-btns{padding:7px 10px;display:flex;flex-direction:column;gap:5px;position:relative;z-index:2;}
+.viol-btn{background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2);border-left:2px solid var(--crimson);
+  color:var(--text-bright);cursor:pointer;padding:6px 9px;display:flex;align-items:center;gap:8px;
+  transition:all .2s;width:100%;text-align:left;clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));}
+.viol-btn:hover{background:rgba(220,38,38,.14);border-color:var(--crimson-glow);box-shadow:var(--glow-red);transform:translateX(2px);}
+.vi-ico{font-size:.95rem;flex-shrink:0;}.vi-name{font-size:.74rem;font-weight:600;}.vi-pen{font-family:'Share Tech Mono',monospace;font-size:.57rem;color:var(--crimson-glow);}
+.viol-log-t{font-family:'Share Tech Mono',monospace;font-size:.5rem;letter-spacing:4px;color:var(--text-dim);padding:4px 12px 3px;border-top:1px solid var(--border-dark);position:relative;z-index:2;}
+.viol-log{max-height:100px;overflow-y:auto;padding:3px 12px 7px;position:relative;z-index:2;}
+.viol-empty{font-family:'Share Tech Mono',monospace;font-size:.58rem;color:var(--text-dim);text-align:center;padding:7px 0;}
+.viol-entry{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(220,38,38,.08);font-size:.65rem;}
+.viol-entry .vn{color:var(--text-mid);}.viol-entry .vp{color:var(--crimson-glow);font-family:'Share Tech Mono',monospace;}
+
+/* MILESTONE */
+.ms-body{padding:7px 10px;display:flex;flex-direction:column;gap:4px;position:relative;z-index:2;}
+.ms-item{display:flex;align-items:center;gap:9px;padding:6px 9px;border:1px solid var(--border-dark);
+  background:rgba(5,2,15,.5);opacity:.35;transition:all .4s;clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));}
+.ms-item.unlocked{opacity:.65;border-color:rgba(74,222,128,.2);background:rgba(4,46,22,.3);}
+.ms-item.active{opacity:1;border-color:var(--gold);background:linear-gradient(90deg,rgba(245,158,11,.1),transparent);box-shadow:0 0 12px rgba(245,158,11,.18);}
+.ms-lv{font-family:'Share Tech Mono',monospace;font-size:.55rem;color:var(--gold-bright);letter-spacing:1px;width:32px;flex-shrink:0;}
+.ms-name{font-size:.75rem;font-weight:700;color:var(--text-bright);}
+.ms-star{margin-left:auto;font-size:.62rem;opacity:0;transition:opacity .3s;}
+.ms-item.active .ms-star{opacity:1;}
+
+/* SYSTEM NOTIFICATION */
+.sys-notif{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,5,.88);animation:oin .3s ease;}
+.sys-notif.hidden{display:none;}
+@keyframes oin{from{opacity:0}to{opacity:1}}
+.sn-box{background:linear-gradient(160deg,rgba(13,7,32,.99),rgba(5,2,15,.99));border:1px solid var(--purple);
+  padding:40px 48px;text-align:center;max-width:460px;width:92%;position:relative;overflow:hidden;
+  clip-path:polygon(0 0,calc(100% - 20px) 0,100% 20px,100% 100%,20px 100%,0 calc(100% - 20px));}
+.sn-box::before{content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,var(--purple) 0%,transparent 40%) top left/80px 1px no-repeat,
+    linear-gradient(180deg,var(--purple) 0%,transparent 40%) top left/1px 80px no-repeat,
+    linear-gradient(270deg,var(--purple) 0%,transparent 40%) bottom right/80px 1px no-repeat,
+    linear-gradient(0deg,var(--purple) 0%,transparent 40%) bottom right/1px 80px no-repeat;}
+.sn-rune{font-size:2.8rem;margin-bottom:16px;animation:srot 3s linear infinite;display:block;}
+@keyframes srot{to{transform:rotate(360deg)}}
+.sn-text{font-family:'Black Han Sans',sans-serif;font-size:1.3rem;letter-spacing:4px;color:var(--text-bright);white-space:pre-line;margin-bottom:16px;text-shadow:0 0 20px rgba(168,85,247,.5);}
+.sn-text.penalty-text{color:var(--crimson-glow);text-shadow:var(--glow-red);}
+.sn-sub{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--text-dim);letter-spacing:3px;margin-bottom:24px;}
+.sn-close{background:linear-gradient(135deg,rgba(124,58,237,.4),rgba(103,232,249,.15));border:1px solid var(--purple);
+  color:var(--purple-glow);font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:3px;
+  padding:10px 28px;cursor:pointer;transition:all .2s;
+  clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));}
+.sn-close:hover{background:linear-gradient(135deg,var(--purple),rgba(103,232,249,.3));color:#fff;box-shadow:var(--glow-purple);}
+
+/* NAME MODAL */
+.name-modal{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,5,.85);}
+.name-modal.hidden{display:none;}
+.nm-box{background:linear-gradient(135deg,rgba(13,7,32,.99),rgba(10,5,24,.99));border:1px solid var(--purple);
+  padding:32px 36px;width:340px;clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));}
+.nm-title{font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:4px;color:var(--purple-glow);margin-bottom:16px;}
+.nm-input{width:100%;background:rgba(124,58,237,.08);border:1px solid var(--border-mid);color:var(--text-bright);
+  font-family:'Black Han Sans',sans-serif;font-size:1rem;letter-spacing:2px;padding:10px 14px;outline:none;
+  clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));}
+.nm-input:focus{border-color:var(--purple);box-shadow:0 0 0 2px rgba(124,58,237,.2);}
+.nm-btns{display:flex;gap:10px;margin-top:14px;}
+.nm-save{flex:1;background:linear-gradient(135deg,rgba(124,58,237,.4),rgba(103,232,249,.15));border:1px solid var(--purple);
+  color:var(--purple-glow);font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:2px;padding:9px;cursor:pointer;transition:all .2s;
+  clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));}
+.nm-save:hover{background:linear-gradient(135deg,var(--purple),rgba(103,232,249,.3));color:#fff;}
+.nm-cancel{background:transparent;border:1px solid var(--border-mid);color:var(--text-dim);font-family:'Share Tech Mono',monospace;font-size:.6rem;padding:9px 16px;cursor:pointer;transition:all .2s;}
+.nm-cancel:hover{border-color:var(--purple-light);color:var(--text-mid);}
+
+/* PROFILE PAGE */
+.profile-page{max-width:1000px;margin:0 auto;padding:20px 16px;width:100%;display:grid;grid-template-columns:1fr 280px;gap:16px;align-items:start;}
+.avatar-frame{position:relative;width:130px;height:130px;cursor:pointer;margin-bottom:12px;}
+.avatar-big{width:130px;height:130px;background:radial-gradient(circle at 40% 35%,rgba(168,85,247,.3),rgba(5,2,15,.95));
+  border:2px solid var(--purple);border-radius:8px;display:flex;align-items:center;justify-content:center;
+  overflow:hidden;box-shadow:var(--glow-purple),inset 0 0 40px rgba(124,58,237,.15);animation:ab 4s ease-in-out infinite;}
+.avatar-big img,.avatar-big span{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3.2rem;}
+.avatar-big img{object-fit:cover;}
+.avatar-spin{position:absolute;inset:-7px;border-radius:10px;
+  border:1px solid transparent;
+  background:linear-gradient(var(--void),var(--void)) padding-box,conic-gradient(var(--purple),var(--ice-blue),var(--purple-light),var(--purple)) border-box;
+  animation:rot 6s linear infinite;pointer-events:none;}
+@keyframes rot{to{transform:rotate(360deg)}}
+.rank-badge{background:linear-gradient(135deg,var(--gold),var(--gold-bright));color:#000;font-family:'Black Han Sans',sans-serif;
+  font-size:.7rem;padding:3px 12px;border-radius:3px;letter-spacing:3px;box-shadow:var(--glow-gold);display:inline-block;margin-bottom:8px;}
+.profile-hero{padding:22px 20px;position:relative;z-index:2;display:flex;gap:22px;align-items:flex-start;}
+.profile-avatar-zone{display:flex;flex-direction:column;align-items:center;flex-shrink:0;}
+.upload-hint{font-family:'Share Tech Mono',monospace;font-size:.5rem;color:var(--text-dim);letter-spacing:2px;text-align:center;margin-top:4px;}
+.hunter-info{flex:1;display:flex;flex-direction:column;gap:12px;}
+.hunter-name-big{font-family:'Black Han Sans',sans-serif;font-size:1.8rem;letter-spacing:3px;color:#fff;text-shadow:0 0 30px rgba(255,255,255,.2),0 0 60px rgba(168,85,247,.4);}
+.hunter-title-txt{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:var(--purple-light);letter-spacing:4px;}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.info-item{background:rgba(124,58,237,.05);border:1px solid var(--border-dark);border-left:2px solid var(--purple);padding:7px 10px;
+  clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));}
+.info-label{font-family:'Share Tech Mono',monospace;font-size:.5rem;color:var(--text-dim);letter-spacing:3px;margin-bottom:2px;}
+.info-val{font-size:.8rem;color:var(--text-bright);font-weight:700;}
+.status-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;background:rgba(74,222,128,.08);
+  border:1px solid rgba(74,222,128,.3);border-radius:3px;font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--emerge);letter-spacing:2px;}
+.motto-display{padding:14px 18px;position:relative;z-index:2;background:linear-gradient(90deg,rgba(124,58,237,.06),transparent);
+  border-left:3px solid var(--purple);margin:0 16px 14px;
+  clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));}
+.motto-text{font-style:italic;color:var(--text-mid);font-size:.87rem;line-height:1.6;}
+.motto-author{font-family:'Share Tech Mono',monospace;font-size:.55rem;color:var(--purple-light);letter-spacing:2px;margin-top:5px;}
+.sep{height:1px;background:linear-gradient(90deg,transparent,var(--border-mid),transparent);margin:0 14px;}
+
+/* FORM */
+.edit-form{padding:18px;position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-group.full{grid-column:1/-1;}
+.form-label{font-family:'Share Tech Mono',monospace;font-size:.52rem;letter-spacing:3px;color:var(--text-dim);}
+.form-input,.form-select,.form-textarea{background:rgba(124,58,237,.06);border:1px solid var(--border-mid);
+  color:var(--text-bright);font-family:'Noto Sans KR',sans-serif;font-size:.8rem;padding:8px 10px;outline:none;transition:all .2s;width:100%;
+  clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--purple);box-shadow:0 0 0 2px rgba(124,58,237,.2);}
+.form-select option{background:var(--panel);}
+.form-textarea{resize:vertical;min-height:65px;}
+.foto-upload-area{grid-column:1/-1;display:flex;align-items:center;gap:14px;padding:14px;
+  background:rgba(124,58,237,.05);border:1px dashed var(--border-mid);cursor:pointer;transition:all .2s;
+  clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));}
+.foto-upload-area:hover{border-color:var(--purple);background:rgba(124,58,237,.1);}
+.foto-preview-sm{width:56px;height:56px;border:1px solid var(--border-mid);border-radius:4px;display:flex;align-items:center;justify-content:center;overflow:hidden;font-size:1.4rem;flex-shrink:0;}
+.foto-preview-sm img{width:100%;height:100%;object-fit:cover;}
+.foto-info-title{font-family:'Share Tech Mono',monospace;font-size:.58rem;color:var(--ice-blue);letter-spacing:2px;}
+.foto-info-sub{font-size:.67rem;color:var(--text-dim);margin-top:2px;}
+.save-btn{background:linear-gradient(135deg,rgba(124,58,237,.4),rgba(103,232,249,.15));border:1px solid var(--purple);
+  color:var(--purple-glow);font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:3px;
+  padding:11px 24px;cursor:pointer;transition:all .2s;width:100%;
+  clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));}
+.save-btn:hover{background:linear-gradient(135deg,var(--purple),rgba(103,232,249,.3));color:#fff;box-shadow:var(--glow-purple);}
+.save-notif{position:fixed;top:70px;right:20px;z-index:9999;background:linear-gradient(135deg,rgba(13,7,32,.98),rgba(10,5,24,.98));
+  border:1px solid var(--emerge);color:var(--emerge);font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:2px;
+  padding:10px 18px;display:none;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));box-shadow:0 0 20px rgba(74,222,128,.3);}
+.save-notif.show{display:block;animation:fadeInOut 2.5s forwards;}
+@keyframes fadeInOut{0%{opacity:0;transform:translateY(-10px)}15%{opacity:1;transform:translateY(0)}85%{opacity:1}100%{opacity:0;transform:translateY(-10px)}}
+
+/* LEVEL RING */
+.level-ring-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.level-ring{position:relative;width:60px;height:60px;}
+.level-ring svg{transform:rotate(-90deg);}
+.level-ring-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Black Han Sans',sans-serif;font-size:1rem;color:var(--gold-bright);text-shadow:var(--glow-gold);}
+.level-ring-lbl{font-family:'Share Tech Mono',monospace;font-size:.48rem;color:var(--text-dim);letter-spacing:2px;}
+
+/* RANK LIST */
+.rank-row{display:flex;align-items:center;gap:9px;padding:4px 0;}
+.rank-icon{font-family:'Share Tech Mono',monospace;font-size:.58rem;font-weight:700;width:20px;height:20px;border:1px solid;border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+/* FOOTER */
+.footer{text-align:center;padding:14px;font-family:'Share Tech Mono',monospace;font-size:.52rem;color:var(--text-dim);letter-spacing:4px;position:relative;z-index:10;border-top:1px solid var(--border-dark);}
+
+/* FLASH ANIMATIONS */
+@keyframes flash-q{0%,100%{background:linear-gradient(90deg,rgba(124,58,237,.06),rgba(10,5,24,.8))}50%{background:linear-gradient(90deg,rgba(74,222,128,.15),rgba(10,5,24,.8))}}
+.flash-q{animation:flash-q .4s ease;}
+
+@media(max-width:900px){
+  .main-content{grid-template-columns:1fr;padding:8px;}
+  .profile-page{grid-template-columns:1fr;}
+  .profile-hero{flex-direction:column;align-items:center;text-align:center;}
+  .info-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="bg-void"></div>
+<div class="rune-particles"></div>
+<div class="scanlines"></div>
+<div class="vignette"></div>
+<div class="save-notif" id="saveNotif">✦ PROFILE UPDATED</div>
+
+<!-- NAME MODAL -->
+<div class="name-modal hidden" id="name-modal">
+  <div class="nm-box">
+    <div class="nm-title">◈ ENTER HUNTER NAME</div>
+    <input class="nm-input" id="name-input" type="text" placeholder="Hunter Name...">
+    <div class="nm-btns">
+      <button class="nm-save" onclick="saveName()">◈ SAVE</button>
+      <button class="nm-cancel" onclick="closeModal()">CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- SYSTEM NOTIFICATION -->
+<div class="sys-notif hidden" id="sys-notif">
+  <div class="sn-box">
+    <span class="sn-rune" id="sn-icon">⚔</span>
+    <div class="sn-text" id="sn-text"></div>
+    <div class="sn-sub">[ SHADOW SYSTEM NOTIFICATION ]</div>
+    <button class="sn-close" onclick="closeNotif()">◈ ACKNOWLEDGE ◈</button>
+  </div>
+</div>
+
+<div class="app-wrapper">
+  <!-- TOP BAR -->
+  <header class="top-bar">
+    <div>
+      <div class="top-logo">⚔ <span class="sl-a">SANTRI</span><span class="sl-b"> QUEST</span></div>
+      <span class="top-sub">Shadow System · PeTIK 2 Jombang · Hunter Life Log</span>
+    </div>
+    <div class="top-right">
+      <button class="nav-btn active" id="btn-dashboard" onclick="showPage('dashboard')">⚔ DASHBOARD</button>
+      <button class="nav-btn" id="btn-profile" onclick="showPage('profile')">◈ PROFILE</button>
+      <span class="spulse"></span>
+      <span class="sys-time" id="current-date"></span>
+    </div>
+  </header>
+
+  <!-- DASHBOARD PAGE -->
+  <div class="page active" id="page-dashboard">
+    <main class="main-content">
+      <!-- LEFT -->
+      <aside>
+        <div class="sl-panel">
+          <div class="ph"><span class="ph-ico">◈</span><span class="ph-txt">Hunter Status</span><div class="ph-line"></div></div>
+          <div class="player-body">
+            <div class="avatar-row">
+              <div class="avatar-wrap">
+                <div class="avatar-box" id="dash-avatar"><span>⚔️</span></div>
+                <div class="avatar-rank" id="avatar-level">1</div>
+              </div>
+              <div class="hunter-meta">
+                <div class="hunter-name" id="player-name" onclick="editName()">Hunter</div>
+                <div class="hunter-class">CLASS · <span class="hc-name" id="player-status">Santri Baru</span></div>
+                <div class="edit-tip">[ tap name to edit ]</div>
+              </div>
+            </div>
+            <div>
+              <div class="exp-hdr">
+                <span class="exp-lbl">Experience</span>
+                <span class="exp-val" id="exp-numbers">0 / 100</span>
+              </div>
+              <div class="exp-track">
+                <div class="exp-fill" id="exp-bar" style="width:0%"></div>
+              </div>
+              <div class="lv-box">
+                <span class="lv-lbl">CURRENT LEVEL</span>
+                <span class="lv-num" id="level-value">1</span>
+                <div class="lv-next" id="lv-next">next lv →</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sl-panel">
+          <div class="ph"><span class="ph-ico">◈</span><span class="ph-txt">Stat Window</span><div class="ph-line"></div></div>
+          <div class="stats-body">
+            <div class="stat-row"><span class="stat-ico">📖</span><div class="stat-data"><div class="stat-lbl"><span>Ilmu Agama</span><span class="stat-num ca" id="stat-agama">0</span></div><div class="stat-trk"><div class="stat-fill sa" id="stat-agama-bar"></div></div></div></div>
+            <div class="stat-row"><span class="stat-ico">💻</span><div class="stat-data"><div class="stat-lbl"><span>Ilmu IT</span><span class="stat-num ci" id="stat-it">0</span></div><div class="stat-trk"><div class="stat-fill si" id="stat-it-bar"></div></div></div></div>
+            <div class="stat-row"><span class="stat-ico">⚡</span><div class="stat-data"><div class="stat-lbl"><span>Kedisiplinan</span><span class="stat-num cd" id="stat-disiplin">0</span></div><div class="stat-trk"><div class="stat-fill sd" id="stat-disiplin-bar"></div></div></div></div>
+            <div class="stat-row"><span class="stat-ico">💎</span><div class="stat-data"><div class="stat-lbl"><span>Akhlak</span><span class="stat-num ck" id="stat-akhlak">0</span></div><div class="stat-trk"><div class="stat-fill sk" id="stat-akhlak-bar"></div></div></div></div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- CENTER -->
+      <section>
+        <div class="sl-panel">
+          <div class="ph">
+            <span class="ph-ico">◈</span><span class="ph-txt">Daily Quest</span><div class="ph-line"></div>
+            <div class="ph-extras">
+              <span class="quest-date" id="quest-date"></span>
+              <button class="reset-btn" onclick="resetQuests()">↺ RESET</button>
+            </div>
+          </div>
+          <div class="quest-list" id="quest-list"><div class="loading-msg">▶ LOADING QUEST DATA...</div></div>
+        </div>
+      </section>
+
+      <!-- RIGHT -->
+      <aside>
+        <div class="sl-panel">
+          <div class="ph"><span class="ph-ico">◈</span><span class="ph-txt">Penalty Log</span><div class="ph-line"></div></div>
+          <div class="viol-btns">
+            <button class="viol-btn" onclick="addViolation('Bangun Telat',10)"><span class="vi-ico">😴</span><span class="vi-info"><span class="vi-name">Bangun Telat</span><span class="vi-pen">-10 EXP</span></span></button>
+            <button class="viol-btn" onclick="addViolation('Tidak Belajar',15)"><span class="vi-ico">📵</span><span class="vi-info"><span class="vi-name">Tidak Belajar</span><span class="vi-pen">-15 EXP</span></span></button>
+            <button class="viol-btn" onclick="addViolation('Tidak Mengaji',20)"><span class="vi-ico">🚫</span><span class="vi-info"><span class="vi-name">Tidak Mengaji</span><span class="vi-pen">-20 EXP</span></span></button>
+            <button class="viol-btn" onclick="addViolation('Telat Sholat',25)"><span class="vi-ico">⏰</span><span class="vi-info"><span class="vi-name">Telat Sholat</span><span class="vi-pen">-25 EXP</span></span></button>
+            <button class="viol-btn" onclick="addViolation('Skip Olahraga',10)"><span class="vi-ico">🦥</span><span class="vi-info"><span class="vi-name">Skip Olahraga</span><span class="vi-pen">-10 EXP</span></span></button>
+          </div>
+          <div class="viol-log-t">◈ VIOLATION HISTORY</div>
+          <div class="viol-log" id="viol-log"><div class="viol-empty">No violations today ✦</div></div>
+        </div>
+        <div class="sl-panel">
+          <div class="ph"><span class="ph-ico">◈</span><span class="ph-txt">Title Unlocks</span><div class="ph-line"></div></div>
+          <div class="ms-body">
+            <div class="ms-item" id="ms-1"><span class="ms-lv">Lv.1</span><span class="ms-name">Santri Baru</span><span class="ms-star">★</span></div>
+            <div class="ms-item" id="ms-5"><span class="ms-lv">Lv.5</span><span class="ms-name">Santri Aktif</span><span class="ms-star">★</span></div>
+            <div class="ms-item" id="ms-10"><span class="ms-lv">Lv.10</span><span class="ms-name">Santri Disiplin</span><span class="ms-star">★</span></div>
+            <div class="ms-item" id="ms-15"><span class="ms-lv">Lv.15</span><span class="ms-name">Santri Produktif</span><span class="ms-star">★</span></div>
+            <div class="ms-item" id="ms-20"><span class="ms-lv">Lv.20</span><span class="ms-name">Santri Teladan</span><span class="ms-star">★</span></div>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- PROFILE PAGE -->
+  <div class="page" id="page-profile">
+    <div class="profile-page">
+      <div>
+        <div class="sl-panel">
+          <div class="ph"><span class="ph-ico">◈</span><span class="ph-txt">Hunter Identity Record</span><div class="ph-line"></div></div>
+          <div class="profile-hero">
+            <div class="profile-avatar-zone">
+              <div class="avatar-frame" onclick="document.getElementById('fotoInput').click()" title="Klik untuk ganti foto">
+                <div class="avatar-spin"></div>
+                <div class="avatar-big" id="avatarDisplay"><span>⚔️</span></div>
+              </div>
+              <input type="file" id="fotoInput" accept="image/*" style="display:none" onchange="handleFoto(event)">
+              <div class="upload-hint">[ KLIK UNTUK UPLOAD ]</div>
+              <div class="rank-badge" id="rankBadge">RANK E</div>
+            </div>
+            <div class="hunter-info">
+              <div>
+                <div class="hunter-name-big" id="displayNama">HUNTER</div>
+                <div class="hunter-title-txt" id="displayTitleTxt">◈ INITIALIZING... ◈</div>
+              </div>
+              <div class="info-grid">
+                <div class="info-item"><div class="info-label">Umur</div><div class="info-val" id="displayUmur">—</div></div>
+                <div class="info-item"><div class="info-label">Asal Daerah</div><div class="info-val" id="displayAsal">—</div></div>
+                <div class="info-item"><div class="info-label">Kelas / Angkatan</div><div class="info-val" id="displayKelas">—</div></div>
+                <div class="info-item"><div class="info-label">Status Saat Ini</div><div class="info-val"><span class="status-badge"><span class="spulse"></span><span id="statusKiniText">—</span></span></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="sep"></div>
+          <div class="motto-display" id="mottoDisplay" style="display:none">
+            <div class="motto-text" id="displayMotto">"..."</div>
+            <div class="motto-author">— <span id="mottoAuthor">Hunter</span></div>
+          </div>
+        </div>
+
+        <div class="sl-panel">
+          <div class="ph"><span class="ph-ico">◈</span><span class="ph-txt">Edit Profile Data</span><div class="ph-line"></div></div>
+          <div class="edit-form">
+            <div class="foto-upload-area form-group full" onclick="document.getElementById('fotoInput').click()">
+              <div class="foto-preview-sm" id="fotoPreviewSm"><span>⚔️</span></div>
+              <div>
+                <div class="foto-info-title">⬆ UPLOAD FOTO PROFIL</div>
+                <div class="foto-info-sub">Klik di sini atau pada avatar • JPG/PNG/WEBP</div>
+              </div>
+            </div>
+            <div class="form-group"><label class="form-label">Nama Lengkap</label><input class="form-input" id="inputNama" type="text" placeholder="Nama lengkap..."></div>
+            <div class="form-group"><label class="form-label">Umur</label><input class="form-input" id="inputUmur" type="number" min="1" max="99" placeholder="Umur"></div>
+            <div class="form-group"><label class="form-label">Asal Daerah</label><input class="form-input" id="inputAsal" type="text" placeholder="Kota/Kabupaten asal..."></div>
+            <div class="form-group"><label class="form-label">Kelas / Angkatan</label><input class="form-input" id="inputKelas" type="text" placeholder="XII RPL / Angkatan 7..."></div>
+            <div class="form-group full"><label class="form-label">Status Saat Ini</label>
+              <select class="form-select" id="inputStatusKini">
+                <option value="Sedang Belajar">📚 Sedang Belajar</option>
+                <option value="Sedang Mengaji">📖 Sedang Mengaji</option>
+                <option value="Sedang Olahraga">🏃 Sedang Olahraga</option>
+                <option value="Istirahat">😴 Istirahat</option>
+                <option value="Siap Tempur">⚔️ Siap Tempur</option>
+                <option value="On Mission">🎯 On Mission</option>
+                <option value="Grinding EXP">💪 Grinding EXP</option>
+              </select>
+            </div>
+            <div class="form-group full"><label class="form-label">Motto / Quote Pribadi</label><textarea class="form-textarea" id="inputMotto" placeholder="Motto yang menginspirasi..."></textarea></div>
+            <div class="form-group full"><button class="save-btn" onclick="saveProfile()">◈ SAVE PROFILE DATA ◈</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT STATS -->
+      <div>
+        <div class="sl-panel">
+          <div class="ph"><span class="ph-ico">◈</span><span class="ph-txt">Combat Stats</span><div class="ph-line"></div></div>
+          <div style="padding:18px;position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:14px;">
+            <div class="level-ring-wrap">
+              <div class="level-ring">
+                <svg width="60" height="60" viewBox="0 0 60 60">
+                  <circle cx="30" cy="30" r="26" fill="none" stroke="rgba(124,58,237,.2)" stroke-width="4"/>
+                  <circle id="levelRingFill" cx="30" cy="30" r="26" fill="none" stroke="url(#rg)" stroke-width="4" stroke-linecap="round" stroke-dasharray="163.4" stroke-dashoffset="163.4"/>
+                  <defs><linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#7c3aed"/><stop offset="100%" stop-color="#67e8f9"/></linearGradient></defs>
+                </svg>
+                <div class="level-ring-num" id="pLevelNum">1</div>
+              </div>
+              <div class="level-ring-lbl">HUNTER LEVEL</div>
+            </div>
+            <div style="width:100%;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                <span style="font-family:'Share Tech Mono',monospace;font-size:.52rem;color:var(--gold);letter-spacing:2px;">EXP</span>
+                <span style="font-family:'Share Tech Mono',monospace;font-size:.52rem;color:var(--text-dim);" id="pExpText">0 / 100</span>
+              </div>
+              <div style="height:7px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;">
+                <div id="pExpFill" style="height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-bright));width:0%;transition:width 1s ease;"></div>
+              </div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-family:'Share Tech Mono',monospace;font-size:.55rem;color:var(--text-dim);letter-spacing:2px;margin-bottom:3px;">TITLE</div>
+              <div style="font-family:'Black Han Sans',sans-serif;font-size:.85rem;color:var(--purple-glow);letter-spacing:2px;" id="pStatusDisp">Santri Baru</div>
+            </div>
+          </div>
+          <div style="height:1px;background:linear-gradient(90deg,transparent,var(--border-mid),transparent);margin:0 14px;"></div>
+          <div class="stats-body">
+            <div class="stat-row"><span class="stat-ico">📖</span><div class="stat-data"><div class="stat-lbl"><span>Ilmu Agama</span><span class="stat-num ca" id="p-agama">0</span></div><div class="stat-trk"><div class="stat-fill sa" id="p-agama-bar"></div></div></div></div>
+            <div class="stat-row"><span class="stat-ico">💻</span><div class="stat-data"><div class="stat-lbl"><span>Ilmu IT</span><span class="stat-num ci" id="p-it">0</span></div><div class="stat-trk"><div class="stat-fill si" id="p-it-bar"></div></div></div></div>
+            <div class="stat-row"><span class="stat-ico">⚡</span><div class="stat-data"><div class="stat-lbl"><span>Kedisiplinan</span><span class="stat-num cd" id="p-dis">0</span></div><div class="stat-trk"><div class="stat-fill sd" id="p-dis-bar"></div></div></div></div>
+            <div class="stat-row"><span class="stat-ico">💎</span><div class="stat-data"><div class="stat-lbl"><span>Akhlak</span><span class="stat-num ck" id="p-akhlak">0</span></div><div class="stat-trk"><div class="stat-fill sk" id="p-akhlak-bar"></div></div></div></div>
+          </div>
+        </div>
+        <div class="sl-panel">
+          <div class="ph"><span class="ph-ico">◈</span><span class="ph-txt">Rank System</span><div class="ph-line"></div></div>
+          <div style="padding:10px 14px;position:relative;z-index:2;" id="rankList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">◈ SHADOW SYSTEM v2.0 · SANTRI QUEST · PETIK 2 JOMBANG &nbsp;·&nbsp; I ALONE LEVEL UP</footer>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+//  SANTRI QUEST — Pure HTML/JS + localStorage
+// ═══════════════════════════════════════════
+
+const EXP_TABLE = {1:100,2:200,3:350,4:500,5:700,6:900,7:1150,8:1400,9:1700,10:2000,11:2400,12:2800,13:3300,14:3800,15:4500,16:5200,17:6000,18:7000,19:8000,20:9999999};
+const STATUS_TABLE = {1:"Santri Baru",5:"Santri Aktif",10:"Santri Disiplin",15:"Santri Produktif",20:"Santri Teladan"};
+const RANKS = [
+  {min:1,max:4,label:"E",color:"#9ca3af",title:"Santri Baru"},
+  {min:5,max:9,label:"D",color:"#4ade80",title:"Santri Aktif"},
+  {min:10,max:14,label:"C",color:"#67e8f9",title:"Santri Disiplin"},
+  {min:15,max:19,label:"B",color:"#a855f7",title:"Santri Produktif"},
+  {min:20,max:20,label:"S",color:"#f59e0b",title:"Santri Teladan"},
+];
+const DAILY_QUESTS_DEF = [
+  {id:1,title:"Mengaji 30 Menit",    desc:"Baca Al-Qur'an minimal 30 menit",         exp:40,agama:1,it:0,dis:0,akhlak:1,deadline:"08:00",penalty:20},
+  {id:2,title:"Sholat Tepat Waktu",  desc:"Sholat 5 waktu tepat waktu & berjamaah",  exp:50,agama:1,it:0,dis:1,akhlak:1,deadline:"21:00",penalty:25},
+  {id:3,title:"Belajar IT",          desc:"Pelajari materi IT / coding minimal 1 jam",exp:40,agama:0,it:1,dis:0,akhlak:0,deadline:"20:00",penalty:15},
+  {id:4,title:"Membaca Buku",        desc:"Baca buku pengetahuan minimal 20 halaman", exp:30,agama:1,it:0,dis:0,akhlak:0,deadline:"21:00",penalty:10},
+  {id:5,title:"Olahraga",            desc:"Olahraga pagi/sore minimal 20 menit",      exp:25,agama:0,it:0,dis:1,akhlak:0,deadline:"17:00",penalty:10},
+  {id:6,title:"Membersihkan Kamar",  desc:"Bersihkan dan rapikan kamar tidur",        exp:20,agama:0,it:0,dis:1,akhlak:1,deadline:"09:00",penalty:10},
+  {id:7,title:"Membantu Teman",      desc:"Bantu teman yang kesulitan dengan ikhlas", exp:30,agama:0,it:0,dis:0,akhlak:2,deadline:"22:00",penalty:5},
+];
+
+let notifQ=[], showingNotif=false, fotoBase64="";
+
+// ── STORAGE HELPERS ──────────────────────────
+function load(key,def){try{const v=localStorage.getItem(key);return v?JSON.parse(v):def;}catch{return def;}}
+function save(key,val){localStorage.setItem(key,JSON.stringify(val));}
+
+function getPlayer(){
+  return load("sq_player",{name:"Hunter",level:1,exp:0,agama:0,it_skill:0,disiplin:0,akhlak:0,status:"Santri Baru"});
+}
+function savePlayer(p){save("sq_player",p);}
+
+function getProfile(){
+  return load("sq_profile",{nama_lengkap:"",umur:0,asal_daerah:"",kelas:"",motto:"",status_kini:"Sedang Belajar",foto:""});
+}
+function saveProfileData(p){save("sq_profile",p);}
+
+function todayStr(){return new Date().toISOString().slice(0,10);}
+
+function getQuests(){
+  const tgl=todayStr();
+  const stored=load("sq_quests",null);
+  if(stored && stored.date===tgl) return stored.quests;
+  // Buat quest baru untuk hari ini
+  const quests=DAILY_QUESTS_DEF.map(q=>({...q,completed:false,failed:false}));
+  save("sq_quests",{date:tgl,quests});
+  return quests;
+}
+function saveQuests(quests){save("sq_quests",{date:todayStr(),quests});}
+
+function getViolations(){return load("sq_violations",[]);}
+function saveViolations(v){save("sq_violations",v);}
+
+// ── EXP / STATUS ─────────────────────────────
+function expNeeded(lvl){return EXP_TABLE[lvl]||9999999;}
+function getStatus(lvl){let s="Santri Baru";for(const[l,st] of Object.entries(STATUS_TABLE)){if(lvl>=+l)s=st;}return s;}
+function getRank(lvl){return RANKS.find(r=>lvl>=r.min&&lvl<=r.max)||RANKS[0];}
+
+// ── CLOCK ─────────────────────────────────────
+function updateClock(){
+  const n=new Date();
+  document.getElementById("current-date").textContent=n.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  document.getElementById("quest-date").textContent=n.toLocaleDateString("id-ID",{day:"2-digit",month:"short",year:"numeric"});
+}
+updateClock(); setInterval(updateClock,1000);
+
+// ── PAGE NAVIGATION ───────────────────────────
+function showPage(name){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+  document.getElementById("page-"+name).classList.add("active");
+  document.getElementById("btn-"+name).classList.add("active");
+  if(name==="profile"){loadProfilePage();}
+}
+
+// ── RENDER PLAYER ─────────────────────────────
+function renderPlayer(){
+  const p=getPlayer();
+  document.getElementById("player-name").textContent=p.name;
+  document.getElementById("player-status").textContent=p.status;
+  document.getElementById("avatar-level").textContent=p.level;
+  document.getElementById("level-value").textContent=p.level;
+  document.getElementById("exp-numbers").textContent=`${p.exp} / ${expNeeded(p.level)}`;
+  document.getElementById("lv-next").textContent=`${expNeeded(p.level)-p.exp} EXP to next`;
+  const pct=Math.min((p.exp/expNeeded(p.level))*100,100);
+  document.getElementById("exp-bar").style.width=pct+"%";
+  setStat("agama",p.agama); setStat("it",p.it_skill);
+  setStat("disiplin",p.disiplin); setStat("akhlak",p.akhlak);
+  setMS(p.level);
+  // Update avatar dengan foto profil jika ada
+  const prof=getProfile();
+  if(prof.foto){
+    document.getElementById("dash-avatar").innerHTML=`<img src="${prof.foto}" alt="avatar">`;
+  }
+}
+function setStat(k,v){
+  const b=document.getElementById(`stat-${k}-bar`);
+  const x=document.getElementById(`stat-${k}`);
+  if(b) b.style.width=Math.min((v/50)*100,100)+"%";
+  if(x) x.textContent=v;
+}
+function setMS(level){
+  [1,5,10,15,20].forEach(m=>{
+    const el=document.getElementById(`ms-${m}`);
+    if(!el)return;
+    el.classList.remove("active","unlocked");
+    if(level>=m) el.classList.add(level===[...([1,5,10,15,20]).filter(x=>level>=x)].pop()?"active":"unlocked");
+  });
+  const cur=[...([1,5,10,15,20]).filter(x=>level>=x)].pop();
+  [1,5,10,15,20].forEach(m=>{
+    const el=document.getElementById(`ms-${m}`);
+    if(!el)return;
+    el.classList.remove("active","unlocked");
+    if(level>=m) el.classList.add(m===cur?"active":"unlocked");
+  });
+}
+
+// ── QUESTS ───────────────────────────────────
+function timeLeft(deadline){
+  const now=new Date();
+  const[dh,dm]=deadline.split(":").map(Number);
+  const t=new Date(); t.setHours(dh,dm,0,0);
+  const diff=t-now;
+  if(diff<=0)return null;
+  const h=Math.floor(diff/3600000);
+  const m=Math.floor((diff%3600000)/60000);
+  return h>0?`${h}j ${m}m`:`${m} menit`;
+}
+function qIco(t){
+  t=t.toLowerCase();
+  if(t.includes("mengaji"))return"📖";
+  if(t.includes("it")||t.includes("coding"))return"💻";
+  if(t.includes("buku")||t.includes("baca"))return"📚";
+  if(t.includes("olahraga"))return"🏃";
+  if(t.includes("kamar")||t.includes("bersih"))return"🧹";
+  if(t.includes("sholat"))return"🕌";
+  if(t.includes("bantu"))return"🤝";
+  return"⚡";
+}
+function rTags(q){
+  let h="";
+  if(q.exp)   h+=`<span class="rtag rexp">+${q.exp} EXP</span>`;
+  if(q.agama) h+=`<span class="rtag ragama">+${q.agama} Agama</span>`;
+  if(q.it)    h+=`<span class="rtag rit">+${q.it} IT</span>`;
+  if(q.dis)   h+=`<span class="rtag rdis">+${q.dis} Disiplin</span>`;
+  if(q.akhlak)h+=`<span class="rtag rakhlak">+${q.akhlak} Akhlak</span>`;
+  return h;
+}
+function checkExpiredQuests(){
+  const now=new Date().toTimeString().slice(0,5);
+  const quests=getQuests();
+  let changed=false, newFailed=[];
+  quests.forEach(q=>{
+    if(!q.completed&&!q.failed&&now>q.deadline){
+      q.failed=true; changed=true; newFailed.push(q);
+      // Kurangi EXP
+      const p=getPlayer();
+      p.exp=Math.max(0,p.exp-q.penalty);
+      savePlayer(p);
+    }
+  });
+  if(changed){
+    saveQuests(quests);
+    newFailed.forEach(q=>pushNotif(`QUEST FAILED!\n\n"${q.title}"\n-${q.penalty} EXP PENALTY`,"penalty"));
+  }
+  return quests;
+}
+function renderQuests(){
+  const quests=checkExpiredQuests();
+  const list=document.getElementById("quest-list");
+  if(!quests.length){list.innerHTML=`<div class="loading-msg">NO QUESTS</div>`;return;}
+  list.innerHTML=quests.map(q=>{
+    const sisa=timeLeft(q.deadline);
+    const isUrgent=sisa&&parseInt(sisa)<=30&&!sisa.includes("j");
+    const sc=q.failed?"failed":q.completed?"done":"";
+    const dl=`<div class="q-deadline${isUrgent?" urgent":""}">⏰ Deadline ${q.deadline}
+      ${q.completed?""  :q.failed?`<span style="color:var(--crimson-glow)">— GAGAL</span>`
+        :sisa?`<span>(${sisa} lagi)</span>`:`<span style="color:var(--crimson-glow)">— Waktu Habis</span>`}
+    </div>`;
+    const pt=`<span class="rtag penalty-tag">-${q.penalty} EXP jika gagal</span>`;
+    return`<div class="quest-card ${sc}" id="quest-${q.id}">
+      <div class="q-icon">${qIco(q.title)}</div>
+      <div class="q-body">
+        <div class="q-title">${q.title}</div>
+        <div class="q-desc">${q.desc}</div>
+        <div class="q-rwds">${rTags(q)}${!q.completed&&!q.failed?pt:""}</div>
+        ${dl}
+      </div>
+      ${q.failed?`<div class="q-failed">✗ GAGAL</div>`
+        :q.completed?`<div class="q-done">✦ CLEAR</div>`
+        :`<button class="q-btn" onclick="completeQuest(${q.id})">COMPLETE</button>`}
+    </div>`;
+  }).join("");
+}
+function completeQuest(id){
+  const now=new Date().toTimeString().slice(0,5);
+  const quests=getQuests();
+  const q=quests.find(x=>x.id===id);
+  if(!q||q.completed||q.failed){alert("Quest tidak bisa diselesaikan!");return;}
+  if(now>q.deadline){alert(`Deadline ${q.deadline} sudah lewat!`);return;}
+  q.completed=true;
+  saveQuests(quests);
+
+  // Update player
+  const p=getPlayer();
+  const oldStatus=p.status;
+  p.exp+=q.exp; p.agama+=q.agama; p.it_skill+=q.it; p.disiplin+=q.dis; p.akhlak+=q.akhlak;
+  const level_ups=[], status_changes=[];
+  while(p.exp>=expNeeded(p.level)&&p.level<20){
+    p.exp-=expNeeded(p.level); p.level++;
+    level_ups.push(p.level);
+    const ns=getStatus(p.level);
+    if(ns!==p.status){status_changes.push(ns);p.status=ns;}
+  }
+  p.status=getStatus(p.level);
+  savePlayer(p);
+
+  // Animate card
+  const card=document.getElementById(`quest-${id}`);
+  if(card){
+    card.classList.add("flash-q");
+    setTimeout(()=>{
+      card.classList.add("done");
+      card.querySelector(".q-btn")?.remove();
+      const d=document.createElement("div");
+      d.className="q-done";d.textContent="✦ CLEAR";card.appendChild(d);
+    },300);
+  }
+  renderPlayer();
+  level_ups.forEach(l=>pushNotif(`LEVEL UP!\nLEVEL ${l} ACHIEVED`,"levelup"));
+  status_changes.forEach(s=>pushNotif(`NEW TITLE\nUNLOCKED!\n\n"${s}"`,"status"));
+}
+function resetQuests(){
+  if(!confirm("Reset semua quest hari ini?"))return;
+  const quests=DAILY_QUESTS_DEF.map(q=>({...q,completed:false,failed:false}));
+  saveQuests(quests);
+  renderQuests();
+}
+
+// ── VIOLATIONS ───────────────────────────────
+function addViolation(title,penalty){
+  if(!confirm(`Catat pelanggaran:\n"${title}" → -${penalty} EXP?`))return;
+  const p=getPlayer();
+  p.exp=Math.max(0,p.exp-penalty);
+  savePlayer(p);
+  const viols=getViolations();
+  viols.unshift({title,penalty,date:todayStr()});
+  if(viols.length>50)viols.pop();
+  saveViolations(viols);
+  renderPlayer();
+  renderViolations();
+  pushNotif(`PENALTY RECORDED\n\n"${title}"\n-${penalty} EXP`,"penalty");
+}
+function renderViolations(){
+  const viols=getViolations().filter(v=>v.date===todayStr());
+  const log=document.getElementById("viol-log");
+  log.innerHTML=viols.length
+    ?viols.map(v=>`<div class="viol-entry"><span class="vn">${v.title}</span><span class="vp">-${v.penalty} EXP</span></div>`).join("")
+    :`<div class="viol-empty">No violations today ✦</div>`;
+}
+
+// ── PROFILE ──────────────────────────────────
+function handleFoto(e){
+  const file=e.target.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    fotoBase64=ev.target.result;
+    document.getElementById("avatarDisplay").innerHTML=`<img src="${fotoBase64}">`;
+    document.getElementById("fotoPreviewSm").innerHTML=`<img src="${fotoBase64}">`;
+  };
+  reader.readAsDataURL(file);
+}
+function loadProfilePage(){
+  const prof=getProfile();
+  const p=getPlayer();
+  document.getElementById("inputNama").value=prof.nama_lengkap||"";
+  document.getElementById("inputUmur").value=prof.umur||"";
+  document.getElementById("inputAsal").value=prof.asal_daerah||"";
+  document.getElementById("inputKelas").value=prof.kelas||"";
+  document.getElementById("inputMotto").value=prof.motto||"";
+  document.getElementById("inputStatusKini").value=prof.status_kini||"Sedang Belajar";
+  document.getElementById("displayNama").textContent=prof.nama_lengkap||"HUNTER";
+  document.getElementById("displayUmur").textContent=prof.umur?prof.umur+" Tahun":"—";
+  document.getElementById("displayAsal").textContent=prof.asal_daerah||"—";
+  document.getElementById("displayKelas").textContent=prof.kelas||"—";
+  document.getElementById("statusKiniText").textContent=prof.status_kini||"—";
+  document.getElementById("displayTitleTxt").textContent="◈ "+(prof.status_kini||"INITIALIZING").toUpperCase()+" ◈";
+  if(prof.motto){
+    document.getElementById("displayMotto").textContent=`"${prof.motto}"`;
+    document.getElementById("mottoAuthor").textContent=prof.nama_lengkap||"Hunter";
+    document.getElementById("mottoDisplay").style.display="block";
+  }
+  if(prof.foto){
+    fotoBase64=prof.foto;
+    document.getElementById("avatarDisplay").innerHTML=`<img src="${prof.foto}">`;
+    document.getElementById("fotoPreviewSm").innerHTML=`<img src="${prof.foto}">`;
+  }
+  // Rank badge
+  const rank=getRank(p.level);
+  document.getElementById("rankBadge").textContent=`RANK ${rank.label}`;
+  document.getElementById("rankBadge").style.background=`linear-gradient(135deg,${rank.color},${rank.color}cc)`;
+  // Level ring
+  const expPct=Math.min(100,(p.exp/expNeeded(p.level))*100);
+  document.getElementById("levelRingFill").style.strokeDashoffset=163.4-(expPct/100)*163.4;
+  document.getElementById("pLevelNum").textContent=p.level;
+  document.getElementById("pExpText").textContent=`${p.exp} / ${expNeeded(p.level)}`;
+  document.getElementById("pExpFill").style.width=expPct+"%";
+  document.getElementById("pStatusDisp").textContent=p.status;
+  // Stat bars
+  const mx=Math.max(p.agama||1,p.it_skill||1,p.disiplin||1,p.akhlak||1,1);
+  document.getElementById("p-agama").textContent=p.agama;
+  document.getElementById("p-it").textContent=p.it_skill;
+  document.getElementById("p-dis").textContent=p.disiplin;
+  document.getElementById("p-akhlak").textContent=p.akhlak;
+  document.getElementById("p-agama-bar").style.width=Math.min(100,(p.agama/mx)*100)+"%";
+  document.getElementById("p-it-bar").style.width=Math.min(100,(p.it_skill/mx)*100)+"%";
+  document.getElementById("p-dis-bar").style.width=Math.min(100,(p.disiplin/mx)*100)+"%";
+  document.getElementById("p-akhlak-bar").style.width=Math.min(100,(p.akhlak/mx)*100)+"%";
+  // Rank list
+  document.getElementById("rankList").innerHTML=RANKS.map(rk=>`
+    <div class="rank-row" style="opacity:${p.level>=rk.min&&p.level<=rk.max?1:.35}">
+      <div class="rank-icon" style="color:${rk.color};border-color:${rk.color};${p.level>=rk.min&&p.level<=rk.max?`box-shadow:0 0 8px ${rk.color};background:${rk.color}22`:''}">${rk.label}</div>
+      <div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:.54rem;color:${rk.color};letter-spacing:1px;">${rk.title}</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:.46rem;color:var(--text-dim);">Lv.${rk.min}${rk.max<20?"–"+rk.max:"+"}${p.level>=rk.min&&p.level<=rk.max?" ← CURRENT":""}</div>
+      </div>
+    </div>`).join("");
+}
+function saveProfile(){
+  const data={
+    nama_lengkap:document.getElementById("inputNama").value.trim(),
+    umur:parseInt(document.getElementById("inputUmur").value)||0,
+    asal_daerah:document.getElementById("inputAsal").value.trim(),
+    kelas:document.getElementById("inputKelas").value.trim(),
+    motto:document.getElementById("inputMotto").value.trim(),
+    status_kini:document.getElementById("inputStatusKini").value,
+    foto:fotoBase64
+  };
+  saveProfileData(data);
+  if(data.nama_lengkap){const p=getPlayer();p.name=data.nama_lengkap;savePlayer(p);}
+  loadProfilePage();
+  renderPlayer();
+  const n=document.getElementById("saveNotif");
+  n.classList.add("show");
+  setTimeout(()=>n.classList.remove("show"),2500);
+}
+
+// ── NOTIFICATIONS ────────────────────────────
+const ICONS={levelup:"⚔",status:"👑",penalty:"💀",default:"⚡"};
+function pushNotif(msg,type="default"){notifQ.push({msg,type});if(!showingNotif)nextNotif();}
+function nextNotif(){
+  if(!notifQ.length){showingNotif=false;return;}
+  showingNotif=true;
+  const{msg,type}=notifQ.shift();
+  const txt=document.getElementById("sn-text");
+  txt.innerHTML=msg.replace(/\n/g,"<br>");
+  txt.className="sn-text"+(type==="penalty"?" penalty-text":"");
+  document.getElementById("sn-icon").textContent=ICONS[type]||ICONS.default;
+  document.getElementById("sys-notif").classList.remove("hidden");
+}
+function closeNotif(){document.getElementById("sys-notif").classList.add("hidden");setTimeout(nextNotif,250);}
+
+// ── NAME EDIT ─────────────────────────────────
+function editName(){
+  document.getElementById("name-input").value=document.getElementById("player-name").textContent;
+  document.getElementById("name-modal").classList.remove("hidden");
+  setTimeout(()=>document.getElementById("name-input").focus(),100);
+}
+function closeModal(){document.getElementById("name-modal").classList.add("hidden");}
+function saveName(){
+  const name=document.getElementById("name-input").value.trim();
+  if(!name){alert("Nama tidak boleh kosong!");return;}
+  const p=getPlayer(); p.name=name; savePlayer(p);
+  const prof=getProfile(); prof.nama_lengkap=name; saveProfileData(prof);
+  closeModal(); renderPlayer();
+}
+
+// ── KEYBOARD ─────────────────────────────────
+document.addEventListener("keydown",e=>{
+  if(e.key==="Enter"&&!document.getElementById("name-modal").classList.contains("hidden"))saveName();
+  if(e.key==="Escape"){closeModal();closeNotif();}
+});
+
+// ── AUTO CHECK DEADLINE ───────────────────────
+setInterval(()=>{renderQuests();renderPlayer();},60000);
+
+// ── INIT ─────────────────────────────────────
+renderPlayer();
+renderQuests();
+renderViolations();
+</script>
+</body>
+</html>
