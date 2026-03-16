@@ -301,29 +301,61 @@ button:hover,.nav-btn:hover,.q-btn:hover,.save-btn:hover,.nm-save:hover,.aq-save
 .legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
 
 /* PROGRESS MAP */
-.map-page{padding:14px 16px;max-width:800px;width:100%;margin:0 auto;}
-.map-wrap{padding:20px;position:relative;z-index:2;min-height:400px;}
+.map-page{padding:14px 16px;max-width:860px;width:100%;margin:0 auto;}
+.map-wrap{padding:24px 20px;position:relative;z-index:2;min-height:400px;}
 .map-path{display:flex;flex-direction:column;align-items:center;gap:0;position:relative;}
-.map-path::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:2px;
-  background:linear-gradient(180deg,var(--purple),var(--border-mid));transform:translateX(-50%);z-index:0;}
-.map-node{position:relative;z-index:2;display:flex;align-items:center;gap:16px;width:100%;margin-bottom:20px;cursor:pointer;}
+/* Center spine line */
+.map-path::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--purple-light),var(--purple),var(--border-mid));
+  transform:translateX(-50%);z-index:0;
+  box-shadow:0 0 10px rgba(168,85,247,.4);}
+.map-node{position:relative;z-index:2;display:flex;align-items:center;gap:20px;width:100%;margin-bottom:16px;cursor:pointer;}
 .map-node:nth-child(even){flex-direction:row-reverse;}
 .map-node:nth-child(even) .map-node-info{text-align:right;}
-.map-circle{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-size:1.6rem;flex-shrink:0;border:2px solid;position:relative;z-index:3;
-  background:rgba(13,7,32,.95);}
-.map-circle.locked{border-color:var(--border-mid);opacity:.4;filter:grayscale(.8);}
-.map-circle.current{border-color:var(--gold);box-shadow:var(--glow-gold),0 0 40px rgba(245,158,11,.3);
+/* Circle icon */
+.map-circle{width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:1.8rem;flex-shrink:0;border:2px solid;position:relative;z-index:3;
+  background:linear-gradient(135deg,rgba(13,7,32,.98),rgba(5,2,15,.98));}
+.map-circle.locked{border-color:var(--border-mid);opacity:.35;filter:grayscale(1);}
+.map-circle.current{border-color:var(--gold);
+  box-shadow:var(--glow-gold),0 0 50px rgba(245,158,11,.35),inset 0 0 20px rgba(245,158,11,.1);
+  background:linear-gradient(135deg,rgba(40,28,5,.98),rgba(13,7,32,.98));
   animation:pulse-node 2s ease-in-out infinite;}
-@keyframes pulse-node{0%,100%{box-shadow:var(--glow-gold),0 0 40px rgba(245,158,11,.3)}50%{box-shadow:0 0 30px rgba(245,158,11,.95),0 0 60px rgba(245,158,11,.5)}}
-.map-circle.done{border-color:var(--emerge);box-shadow:var(--glow-green);}
+@keyframes pulse-node{0%,100%{box-shadow:var(--glow-gold),0 0 40px rgba(245,158,11,.3)}50%{box-shadow:0 0 35px rgba(245,158,11,.99),0 0 70px rgba(245,158,11,.55),inset 0 0 25px rgba(245,158,11,.12)}}
+.map-circle.done{border-color:var(--emerge);
+  box-shadow:var(--glow-green),inset 0 0 15px rgba(74,222,128,.08);
+  background:linear-gradient(135deg,rgba(4,18,9,.98),rgba(13,7,32,.98));}
+/* Info card — solid background so text is always readable */
 .map-node-info{flex:1;}
-.map-node-lv{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--text-dim);letter-spacing:2px;}
-.map-node-name{font-family:'Black Han Sans',sans-serif;font-size:1rem;letter-spacing:2px;}
+.map-node-card{
+  background:linear-gradient(135deg,rgba(13,7,32,.95),rgba(8,4,20,.95));
+  border:1px solid var(--border-mid);padding:12px 16px;
+  clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));
+  position:relative;}
+.map-node-card.locked{border-color:var(--border-dark);opacity:.5;}
+.map-node-card.current{border-color:var(--gold);
+  background:linear-gradient(135deg,rgba(30,18,3,.95),rgba(13,7,32,.95));
+  box-shadow:0 0 15px rgba(245,158,11,.15);}
+.map-node-card.done{border-color:rgba(74,222,128,.35);
+  background:linear-gradient(135deg,rgba(4,15,7,.95),rgba(13,7,32,.95));}
+.map-node-card::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:linear-gradient(90deg,currentColor 0%,transparent 40%) top left/40px 1px no-repeat,
+    linear-gradient(180deg,currentColor 0%,transparent 40%) top left/1px 40px no-repeat,
+    linear-gradient(270deg,currentColor 0%,transparent 40%) bottom right/40px 1px no-repeat,
+    linear-gradient(0deg,currentColor 0%,transparent 40%) bottom right/1px 40px no-repeat;
+  opacity:.3;}
+.map-node-lv{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--text-dim);letter-spacing:3px;margin-bottom:3px;position:relative;z-index:1;}
+.map-node-name{font-family:'Black Han Sans',sans-serif;font-size:1.05rem;letter-spacing:2px;position:relative;z-index:1;}
 .map-node-name.locked{color:var(--text-dim);}
 .map-node-name.current{color:var(--gold-bright);text-shadow:var(--glow-gold);}
-.map-node-name.done{color:var(--emerge);}
-.map-node-desc{font-size:.72rem;color:var(--text-dim);margin-top:3px;}
+.map-node-name.done{color:var(--emerge);text-shadow:var(--glow-green);}
+.map-node-desc{font-size:.75rem;color:var(--text-mid);margin-top:4px;position:relative;z-index:1;line-height:1.4;}
+.map-node-card.locked .map-node-desc{color:var(--text-dim);}
+.map-node-badge{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:.52rem;letter-spacing:2px;
+  padding:2px 8px;border:1px solid;border-radius:2px;margin-top:5px;position:relative;z-index:1;}
+.map-node-badge.current{color:var(--gold);border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.08);}
+.map-node-badge.done{color:var(--emerge);border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.08);}
+.map-node-badge.locked{color:var(--text-dim);border-color:var(--border-dark);background:transparent;}
 
 /* LEVEL UP OVERLAY */
 .lu-overlay{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;
@@ -1137,15 +1169,33 @@ function playSound(type){
       g.gain.setValueAtTime(.2,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.3);
       o.start();o.stop(ctx.currentTime+.3);
     } else if(type==="notif"){
-      // System notification ping — like a system alert
-      [800,600].forEach((f,i)=>{
-        const o=ctx.createOscillator(),g=ctx.createGain();
-        o.connect(g);g.connect(ctx.destination);o.type="sine";o.frequency.value=f;
-        g.gain.setValueAtTime(0,ctx.currentTime+i*.1);
-        g.gain.linearRampToValueAtTime(.18,ctx.currentTime+i*.1+.03);
-        g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.1+.25);
-        o.start(ctx.currentTime+i*.1);o.stop(ctx.currentTime+i*.1+.25);
-      });
+      // Solo Leveling style — two-tone electronic system chime
+      // High electronic beep + low resonant hum like the anime
+      const master=ctx.createGain();master.connect(ctx.destination);master.gain.setValueAtTime(.35,ctx.currentTime);
+      // First: sharp high beep
+      const o1=ctx.createOscillator(),g1=ctx.createGain();
+      o1.connect(g1);g1.connect(master);o1.type="square";
+      o1.frequency.setValueAtTime(1200,ctx.currentTime);
+      o1.frequency.exponentialRampToValueAtTime(900,ctx.currentTime+.08);
+      g1.gain.setValueAtTime(.4,ctx.currentTime);g1.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.15);
+      o1.start();o1.stop(ctx.currentTime+.15);
+      // Second: lower resonant beep after tiny gap
+      const o2=ctx.createOscillator(),g2=ctx.createGain();
+      o2.connect(g2);g2.connect(master);o2.type="sine";
+      o2.frequency.setValueAtTime(600,ctx.currentTime+.12);
+      o2.frequency.exponentialRampToValueAtTime(500,ctx.currentTime+.3);
+      g2.gain.setValueAtTime(0,ctx.currentTime+.12);
+      g2.gain.linearRampToValueAtTime(.5,ctx.currentTime+.15);
+      g2.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.45);
+      o2.start(ctx.currentTime+.12);o2.stop(ctx.currentTime+.45);
+      // Sub bass thud
+      const o3=ctx.createOscillator(),g3=ctx.createGain();
+      o3.connect(g3);g3.connect(master);o3.type="sine";
+      o3.frequency.setValueAtTime(80,ctx.currentTime+.1);
+      g3.gain.setValueAtTime(0,ctx.currentTime+.1);
+      g3.gain.linearRampToValueAtTime(.3,ctx.currentTime+.12);
+      g3.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.35);
+      o3.start(ctx.currentTime+.1);o3.stop(ctx.currentTime+.35);
     }
   }catch(e){}
 }
@@ -1314,8 +1364,10 @@ function completeQ(id){
   }
   playSound("complete");
   renderPlayer();
+  // Quest complete notification — Solo Leveling style
+  pushNotif(`Quest selesai!\n\n+${q.exp} EXP diperoleh.\n\nApakah kamu ingin melanjutkan?`,"quest_done");
   if(lvUps.length){lvUps.forEach(l=>showLU(l,getStatus(l)));playSound("levelup");}
-  scChanges.forEach(s=>pushNotif(`NEW TITLE!\n\n"${s}"`,"status"));
+  scChanges.forEach(s=>pushNotif(`Title baru terbuka!\n\n"${s}"\n\nApakah kamu menerimanya?`,"status"));
   checkAch();
 }
 
@@ -1407,6 +1459,7 @@ const NOTIF_CONFIG={
   status:{icon:"👑",title:"NOTIFICATION",sub:"[ SHADOW SYSTEM ]",singleBtn:false,yesLabel:"YES",highlight:"green"},
   penalty:{icon:"⚠️",title:"NOTIFICATION",sub:"[ SHADOW SYSTEM — WARNING ]",singleBtn:false,yesLabel:"YES",highlight:"red"},
   achievement:{icon:"🏆",title:"NOTIFICATION",sub:"[ SHADOW SYSTEM — ACHIEVEMENT ]",singleBtn:true,yesLabel:"ACKNOWLEDGE",highlight:"gold"},
+  quest_done:{icon:"✦",title:"NOTIFICATION",sub:"[ SHADOW SYSTEM ]",singleBtn:false,yesLabel:"YES",highlight:"gold"},
   default:{icon:"⚠️",title:"NOTIFICATION",sub:"[ SHADOW SYSTEM ]",singleBtn:false,yesLabel:"YES",highlight:""}
 };
 
@@ -1459,19 +1512,28 @@ function saveName(){
 // ── MAP ────────────────────────────────────────
 function renderMap(){
   const p=gP();
-  document.getElementById("map-level-txt").textContent=`CURRENT: LV.${p.level} — ${p.status}`;
+  document.getElementById("map-level-txt").textContent=`LV.${p.level} — ${p.status}`;
   const path=document.getElementById("map-path");
   path.innerHTML=MAP_NODES.map((node,i)=>{
     const done=p.level>node.lv;
     const current=p.level>=node.lv&&(i===MAP_NODES.length-1||p.level<MAP_NODES[i+1].lv);
     const locked=p.level<node.lv;
     const cls=done?"done":current?"current":"locked";
+    const badge=current
+      ?`<span class="map-node-badge current">▶ POSISI KAMU</span>`
+      :done?`<span class="map-node-badge done">✦ CLEARED</span>`
+      :`<span class="map-node-badge locked">🔒 Butuh Lv.${node.lv}</span>`;
     return`<div class="map-node" onclick="mapNodeClick(${node.lv})">
-      <div class="map-circle ${cls}" style="${!locked?`border-color:${node.color};`:""}${done?`box-shadow:0 0 15px ${node.color}40;`:""}">${node.icon}</div>
+      <div class="map-circle ${cls}" style="${!locked?`border-color:${node.color};`:""}">
+        ${node.icon}
+      </div>
       <div class="map-node-info">
-        <div class="map-node-lv">LV.${node.lv}</div>
-        <div class="map-node-name ${cls}" style="${current?`color:${node.color};text-shadow:0 0 15px ${node.color}80;`:done?`color:${node.color};`:""}${locked?"color:var(--text-dim);":""}">${node.name}</div>
-        <div class="map-node-desc">${current?"▶ POSISI KAMU SEKARANG":done?"✦ Sudah Dilewati":locked?`🔒 Butuh Lv.${node.lv}`:""} — ${node.desc}</div>
+        <div class="map-node-card ${cls}">
+          <div class="map-node-lv">◈ LEVEL ${node.lv}</div>
+          <div class="map-node-name ${cls}">${node.name}</div>
+          <div class="map-node-desc">${node.desc}</div>
+          ${badge}
+        </div>
       </div>
     </div>`;
   }).join("");
