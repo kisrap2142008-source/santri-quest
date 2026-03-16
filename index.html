@@ -351,26 +351,60 @@ button:hover,.nav-btn:hover,.q-btn:hover,.save-btn:hover,.nm-save:hover,.aq-save
   clip-path:polygon(0 0,calc(100% - 9px) 0,100% 9px,100% 100%,9px 100%,0 calc(100% - 9px));}
 .lu-close:hover{background:linear-gradient(135deg,var(--purple),rgba(103,232,249,.3));color:#fff;box-shadow:var(--glow-purple);}
 
-/* SYS NOTIF */
-.sys-notif{position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;background:rgba(0,0,5,.87);}
+/* SYS NOTIF — Solo Leveling System Style */
+.sys-notif{position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,10,.82);backdrop-filter:blur(3px);}
 .sys-notif.hidden{display:none;}
-.sn-box{background:linear-gradient(160deg,rgba(13,7,32,.99),rgba(5,2,15,.99));border:1px solid var(--purple);
-  padding:40px 50px;text-align:center;max-width:440px;width:92%;
-  clip-path:polygon(0 0,calc(100% - 20px) 0,100% 20px,100% 100%,20px 100%,0 calc(100% - 20px));}
-.sn-box::before{content:'';position:absolute;inset:0;
-  background:linear-gradient(90deg,var(--purple) 0%,transparent 40%) top left/80px 1px no-repeat,
-    linear-gradient(180deg,var(--purple) 0%,transparent 40%) top left/1px 80px no-repeat,
-    linear-gradient(270deg,var(--purple) 0%,transparent 40%) bottom right/80px 1px no-repeat,
-    linear-gradient(0deg,var(--purple) 0%,transparent 40%) bottom right/1px 80px no-repeat;}
-.sn-rune{font-size:2.6rem;margin-bottom:16px;animation:srot 3s linear infinite;display:block;}
-@keyframes srot{to{transform:rotate(360deg)}}
-.sn-text{font-family:'Black Han Sans',sans-serif;font-size:1.2rem;letter-spacing:4px;color:var(--text-bright);white-space:pre-line;margin-bottom:14px;}
-.sn-text.penalty-text{color:var(--crimson-glow);}
-.sn-sub{font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--text-dim);letter-spacing:3px;margin-bottom:22px;}
-.sn-close{background:linear-gradient(135deg,rgba(124,58,237,.4),rgba(103,232,249,.15));border:1px solid var(--purple);
-  color:var(--purple-glow);font-family:'Share Tech Mono',monospace;font-size:.63rem;letter-spacing:3px;padding:10px 26px;cursor:pointer;
-  clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));}
-.sn-close:hover{background:linear-gradient(135deg,var(--purple),rgba(103,232,249,.3));color:#fff;box-shadow:var(--glow-purple);}
+/* Crack texture overlay */
+.sys-notif::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(103,232,249,.015) 40px,rgba(103,232,249,.015) 41px),
+    repeating-linear-gradient(-45deg,transparent,transparent 40px,rgba(103,232,249,.01) 40px,rgba(103,232,249,.01) 41px);}
+.sn-box{
+  background:linear-gradient(160deg,rgba(4,12,28,.97),rgba(1,6,18,.99));
+  border:2px solid var(--ice);
+  padding:0;text-align:center;max-width:500px;width:94%;position:relative;overflow:hidden;
+  box-shadow:0 0 0 1px rgba(103,232,249,.15),0 0 40px rgba(103,232,249,.15),inset 0 0 60px rgba(0,0,20,.8);
+  animation:sn-appear .25s cubic-bezier(.175,.885,.32,1.275);}
+@keyframes sn-appear{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+/* Animated border glow */
+.sn-box::after{content:'';position:absolute;inset:-2px;border:2px solid transparent;
+  background:linear-gradient(var(--void),var(--void)) padding-box,
+    linear-gradient(90deg,var(--ice),rgba(103,232,249,.3),var(--ice)) border-box;
+  animation:border-pulse 2s ease-in-out infinite;pointer-events:none;z-index:3;}
+@keyframes border-pulse{0%,100%{opacity:.7}50%{opacity:1}}
+/* Header bar — NOTIFICATION */
+.sn-header{display:flex;align-items:center;gap:0;border-bottom:2px solid var(--ice);position:relative;z-index:2;}
+.sn-header-icon{background:rgba(103,232,249,.12);border-right:2px solid var(--ice);padding:14px 18px;
+  display:flex;align-items:center;justify-content:center;}
+.sn-header-icon span{font-size:1.6rem;color:var(--ice);text-shadow:var(--glow-ice);display:block;}
+.sn-header-title{flex:1;padding:14px 20px;
+  font-family:'Black Han Sans',sans-serif;font-size:1.3rem;letter-spacing:6px;color:var(--ice);
+  text-shadow:var(--glow-ice),0 0 40px rgba(103,232,249,.4);text-align:left;}
+/* Body */
+.sn-body{padding:28px 32px 24px;position:relative;z-index:2;}
+/* Crack lines background */
+.sn-body::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.06;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cpath d='M20 10 L80 60 L50 90 L120 150 M150 20 L110 70 L140 100 L90 180' stroke='%2367e8f9' stroke-width='1' fill='none'/%3E%3C/svg%3E") center/cover;}
+.sn-text{font-family:'Noto Sans KR',sans-serif;font-size:1rem;color:#e8f4ff;line-height:1.7;white-space:pre-line;margin-bottom:6px;text-align:left;}
+.sn-text .highlight{color:var(--crimson-glow);font-weight:700;text-shadow:0 0 10px rgba(220,38,38,.5);}
+.sn-text .highlight-gold{color:var(--gold-bright);font-weight:700;text-shadow:0 0 10px rgba(245,158,11,.5);}
+.sn-text .highlight-green{color:var(--emerge);font-weight:700;text-shadow:0 0 10px rgba(74,222,128,.5);}
+.sn-sub{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:rgba(103,232,249,.5);letter-spacing:2px;margin-bottom:24px;text-align:left;}
+/* Buttons */
+.sn-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;position:relative;z-index:2;padding:0 32px 28px;}
+.sn-btn-yes,.sn-btn-no{font-family:'Black Han Sans',sans-serif;font-size:.95rem;letter-spacing:4px;
+  padding:13px 0;cursor:pointer;border:2px solid;transition:all .2s;}
+.sn-btn-yes{background:rgba(103,232,249,.08);border-color:var(--ice);color:#fff;
+  box-shadow:inset 0 0 20px rgba(103,232,249,.05);}
+.sn-btn-yes:hover{background:rgba(103,232,249,.2);box-shadow:var(--glow-ice),inset 0 0 30px rgba(103,232,249,.1);
+  transform:scale(1.04) translateY(-1px);}
+.sn-btn-no{background:rgba(220,38,38,.06);border-color:rgba(220,38,38,.5);color:rgba(255,255,255,.7);}
+.sn-btn-no:hover{background:rgba(220,38,38,.15);border-color:var(--crimson-glow);color:#fff;
+  box-shadow:var(--glow-red);transform:scale(1.04) translateY(-1px);}
+/* Single button variant */
+.sn-btn-single{grid-column:1/-1;background:rgba(103,232,249,.08);border-color:var(--ice);color:#fff;
+  font-family:'Black Han Sans',sans-serif;font-size:.95rem;letter-spacing:4px;padding:13px 0;cursor:pointer;border:2px solid;transition:all .2s;}
+.sn-btn-single:hover{background:rgba(103,232,249,.2);box-shadow:var(--glow-ice);transform:scale(1.02) translateY(-1px);}
 
 /* NAME MODAL */
 .name-modal{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,5,.87);}
@@ -496,13 +530,21 @@ button:hover,.nav-btn:hover,.q-btn:hover,.save-btn:hover,.nm-save:hover,.aq-save
   </div>
 </div>
 
-<!-- SYS NOTIF -->
+<!-- SYS NOTIF — Solo Leveling Style -->
 <div class="sys-notif hidden" id="sys-notif">
   <div class="sn-box">
-    <span class="sn-rune" id="sn-icon">⚔</span>
-    <div class="sn-text" id="sn-text"></div>
-    <div class="sn-sub">[ SHADOW SYSTEM NOTIFICATION ]</div>
-    <button class="sn-close" onclick="closeNotif()">◈ ACKNOWLEDGE ◈</button>
+    <div class="sn-header">
+      <div class="sn-header-icon"><span id="sn-icon">⚠️</span></div>
+      <div class="sn-header-title" id="sn-title">NOTIFICATION</div>
+    </div>
+    <div class="sn-body">
+      <div class="sn-text" id="sn-text"></div>
+      <div class="sn-sub" id="sn-sub">[ SHADOW SYSTEM ]</div>
+    </div>
+    <div class="sn-btns" id="sn-btns">
+      <button class="sn-btn-yes" onclick="confirmNotif()">YES</button>
+      <button class="sn-btn-no" onclick="closeNotif()">NO</button>
+    </div>
   </div>
 </div>
 
@@ -1094,6 +1136,16 @@ function playSound(type){
       o.frequency.setValueAtTime(180,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(60,ctx.currentTime+.3);
       g.gain.setValueAtTime(.2,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.3);
       o.start();o.stop(ctx.currentTime+.3);
+    } else if(type==="notif"){
+      // System notification ping — like a system alert
+      [800,600].forEach((f,i)=>{
+        const o=ctx.createOscillator(),g=ctx.createGain();
+        o.connect(g);g.connect(ctx.destination);o.type="sine";o.frequency.value=f;
+        g.gain.setValueAtTime(0,ctx.currentTime+i*.1);
+        g.gain.linearRampToValueAtTime(.18,ctx.currentTime+i*.1+.03);
+        g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.1+.25);
+        o.start(ctx.currentTime+i*.1);o.stop(ctx.currentTime+i*.1+.25);
+      });
     }
   }catch(e){}
 }
@@ -1349,16 +1401,44 @@ function closeLevelUp(){
 }
 
 // ── NOTIFICATIONS ──────────────────────────────
-const ICONS={levelup:"⚔",status:"👑",penalty:"💀",default:"⚡"};
+// ── NOTIFICATION SYSTEM — Solo Leveling Style ──
+const NOTIF_CONFIG={
+  levelup:{icon:"⚔️",title:"LEVEL UP!",sub:"[ SHADOW SYSTEM — POWER AWAKENED ]",singleBtn:false,yesLabel:"YES",highlight:"gold"},
+  status:{icon:"👑",title:"NOTIFICATION",sub:"[ SHADOW SYSTEM ]",singleBtn:false,yesLabel:"YES",highlight:"green"},
+  penalty:{icon:"⚠️",title:"NOTIFICATION",sub:"[ SHADOW SYSTEM — WARNING ]",singleBtn:false,yesLabel:"YES",highlight:"red"},
+  achievement:{icon:"🏆",title:"NOTIFICATION",sub:"[ SHADOW SYSTEM — ACHIEVEMENT ]",singleBtn:true,yesLabel:"ACKNOWLEDGE",highlight:"gold"},
+  default:{icon:"⚠️",title:"NOTIFICATION",sub:"[ SHADOW SYSTEM ]",singleBtn:false,yesLabel:"YES",highlight:""}
+};
+
 function pushNotif(msg,type="default"){notifQ.push({msg,type});if(!showingNotif)nextNotif();}
 function nextNotif(){
   if(!notifQ.length){showingNotif=false;return;}showingNotif=true;
   const{msg,type}=notifQ.shift();
-  const txt=document.getElementById("sn-text");
-  txt.innerHTML=msg.replace(/\n/g,"<br>");txt.className="sn-text"+(type==="penalty"?" penalty-text":"");
-  document.getElementById("sn-icon").textContent=ICONS[type]||ICONS.default;
+  const cfg=NOTIF_CONFIG[type]||NOTIF_CONFIG.default;
+  // Format message — highlight numbers and key words
+  let formatted=msg.replace(/\n/g,"<br>");
+  // Highlight numbers with + or - 
+  formatted=formatted.replace(/(\+\d+[^<]*EXP)/g,'<span class="highlight-gold">$1</span>');
+  formatted=formatted.replace(/(-\d+[^<]*EXP)/g,'<span class="highlight">$1</span>');
+  // Highlight quoted text
+  formatted=formatted.replace(/"([^"]+)"/g,'"<span class="highlight-'+(type==="penalty"?"red":type==="levelup"?"gold":"green")+'">$1</span>"');
+  document.getElementById("sn-text").innerHTML=formatted;
+  document.getElementById("sn-title").textContent=cfg.title;
+  document.getElementById("sn-sub").textContent=cfg.sub;
+  document.getElementById("sn-icon").textContent=cfg.icon;
+  // Buttons
+  const btns=document.getElementById("sn-btns");
+  if(cfg.singleBtn){
+    btns.innerHTML=`<button class="sn-btn-single" onclick="closeNotif()">${cfg.yesLabel}</button>`;
+  } else {
+    btns.innerHTML=`
+      <button class="sn-btn-yes" onclick="confirmNotif()">${cfg.yesLabel}</button>
+      <button class="sn-btn-no" onclick="closeNotif()">NO</button>`;
+  }
   document.getElementById("sys-notif").classList.remove("hidden");
+  playSound("notif");
 }
+function confirmNotif(){closeNotif();}
 function closeNotif(){document.getElementById("sys-notif").classList.add("hidden");setTimeout(nextNotif,250);}
 
 // ── NAME EDIT ──────────────────────────────────
