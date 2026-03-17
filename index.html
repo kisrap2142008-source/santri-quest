@@ -635,6 +635,59 @@ button:hover,.nav-btn:hover,.q-btn:hover,.save-btn:hover,.nm-save:hover,.aq-save
   .edit-form{grid-template-columns:1fr;}
   .ach-grid{grid-template-columns:repeat(3,1fr);}
 }
+
+/* ── SETTINGS PAGE ──────────────────────────── */
+.settings-page{padding:14px 16px;max-width:800px;width:100%;margin:0 auto;}
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;}
+.set-section{padding:16px;position:relative;z-index:2;}
+.set-title{font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:4px;color:#d4a0ff;
+  text-transform:uppercase;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border-dark);}
+/* Day toggle buttons */
+.day-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:14px;}
+.day-btn{font-family:'Share Tech Mono',monospace;font-size:.58rem;letter-spacing:1px;padding:10px 4px;
+  background:rgba(124,58,237,.07);border:1px solid var(--border-mid);color:#a090c0;
+  cursor:pointer;text-align:center;transition:all .2s;border-radius:3px;}
+.day-btn:hover{background:rgba(124,58,237,.18);border-color:var(--purple);color:#d4a0ff;}
+.day-btn.active{background:rgba(220,38,38,.15);border-color:var(--crimson);color:#f87171;
+  box-shadow:0 0 10px rgba(220,38,38,.2);}
+.day-btn.active:hover{background:rgba(220,38,38,.25);box-shadow:0 0 15px rgba(220,38,38,.3);}
+/* Date picker */
+.date-input-row{display:flex;gap:8px;margin-bottom:10px;}
+.date-in{background:rgba(124,58,237,.07);border:1px solid var(--border-mid);color:#d8c8f0;
+  font-family:'Share Tech Mono',monospace;font-size:.72rem;padding:8px 10px;outline:none;flex:1;}
+.date-in:focus{border-color:var(--purple);box-shadow:0 0 0 2px rgba(124,58,237,.2);}
+.date-add-btn{background:rgba(124,58,237,.15);border:1px solid var(--purple);color:#d4a0ff;
+  font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:1px;padding:8px 14px;
+  cursor:pointer;white-space:nowrap;transition:all .2s;}
+.date-add-btn:hover{background:rgba(124,58,237,.3);color:#fff;box-shadow:var(--glow-purple);}
+/* Dates list */
+.dates-list{display:flex;flex-direction:column;gap:5px;max-height:220px;overflow-y:auto;}
+.date-item{display:flex;align-items:center;justify-content:space-between;
+  background:rgba(220,38,38,.07);border:1px solid rgba(220,38,38,.2);border-left:2px solid var(--crimson);
+  padding:8px 12px;
+  clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));}
+.date-item-txt{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:#f0c0c0;letter-spacing:1px;}
+.date-item-del{background:transparent;border:none;color:var(--crimson-glow);font-size:.85rem;
+  cursor:pointer;padding:2px 6px;opacity:.6;transition:opacity .2s;}
+.date-item-del:hover{opacity:1;}
+.dates-empty{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:#8a7aaa;text-align:center;padding:16px 0;}
+/* Holiday indicator */
+.holiday-banner{
+  background:linear-gradient(90deg,rgba(220,38,38,.12),rgba(124,58,237,.08));
+  border:1px solid rgba(220,38,38,.35);border-left:3px solid var(--crimson);
+  padding:14px 18px;margin-bottom:14px;position:relative;
+  clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));}
+.holiday-banner-title{font-family:'Black Han Sans',sans-serif;font-size:1rem;color:#f87171;
+  letter-spacing:3px;text-shadow:0 0 15px rgba(220,38,38,.4);}
+.holiday-banner-sub{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:#f0b0b0;
+  letter-spacing:2px;margin-top:4px;}
+/* Save settings btn */
+.set-save-btn{width:100%;background:linear-gradient(135deg,rgba(124,58,237,.3),rgba(103,232,249,.1));
+  border:1px solid var(--purple);color:#d4a0ff;font-family:'Share Tech Mono',monospace;
+  font-size:.65rem;letter-spacing:3px;padding:12px;cursor:pointer;margin-top:10px;
+  clip-path:polygon(0 0,calc(100% - 9px) 0,100% 9px,100% 100%,9px 100%,0 calc(100% - 9px));}
+.set-save-btn:hover{background:linear-gradient(135deg,var(--purple),rgba(103,232,249,.2));color:#fff;box-shadow:var(--glow-purple);}
+@media(max-width:700px){.settings-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -705,6 +758,7 @@ button:hover,.nav-btn:hover,.q-btn:hover,.save-btn:hover,.nm-save:hover,.aq-save
       <button class="nav-btn" id="btn-calendar" onclick="showPage('calendar')">📅 LOG</button>
       <button class="nav-btn" id="btn-charts" onclick="showPage('charts')">📊 STATS</button>
       <button class="nav-btn" id="btn-profile" onclick="showPage('profile')">◈ PROFILE</button>
+      <button class="nav-btn" id="btn-settings" onclick="showPage('settings')">⚙ SETTINGS</button>
       <span class="spulse"></span>
       <span class="sys-time" id="sys-time"></span>
     </div>
@@ -1011,6 +1065,60 @@ button:hover,.nav-btn:hover,.q-btn:hover,.save-btn:hover,.nm-save:hover,.aq-save
     </div>
   </div>
 
+  <!-- SETTINGS PAGE -->
+  <div class="page" id="page-settings">
+    <div class="settings-page">
+      <!-- Holiday banner (shown only when today is holiday) -->
+      <div id="holiday-banner-wrap"></div>
+
+      <div class="settings-grid">
+        <!-- LEFT: Hari dalam seminggu -->
+        <div class="panel">
+          <div class="ph"><span class="ph-ico">⚙</span><span class="ph-txt">Hari Libur Mingguan</span><div class="ph-line"></div></div>
+          <div class="set-section">
+            <div class="set-title">Pilih hari yang tidak perlu mengerjakan quest:</div>
+            <div class="day-grid" id="day-grid">
+              <button class="day-btn" data-day="0" onclick="toggleDay(0)">MIN</button>
+              <button class="day-btn" data-day="1" onclick="toggleDay(1)">SEN</button>
+              <button class="day-btn" data-day="2" onclick="toggleDay(2)">SEL</button>
+              <button class="day-btn" data-day="3" onclick="toggleDay(3)">RAB</button>
+              <button class="day-btn" data-day="4" onclick="toggleDay(4)">KAM</button>
+              <button class="day-btn" data-day="5" onclick="toggleDay(5)">JUM</button>
+              <button class="day-btn" data-day="6" onclick="toggleDay(6)">SAB</button>
+            </div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:#9080b0;line-height:1.6;">
+              Hari yang dipilih (merah) akan menjadi hari libur — quest tidak muncul dan tidak ada penalty.
+            </div>
+            <button class="set-save-btn" onclick="saveSettings()">◈ SIMPAN PENGATURAN ◈</button>
+          </div>
+        </div>
+
+        <!-- RIGHT: Tanggal spesifik -->
+        <div class="panel">
+          <div class="ph"><span class="ph-ico">📅</span><span class="ph-txt">Tanggal Libur Spesifik</span><div class="ph-line"></div></div>
+          <div class="set-section">
+            <div class="set-title">Tambah tanggal tertentu sebagai hari libur:</div>
+            <div class="date-input-row">
+              <input class="date-in" type="date" id="date-input">
+              <button class="date-add-btn" onclick="addHolidayDate()">＋ TAMBAH</button>
+            </div>
+            <div class="dates-list" id="dates-list">
+              <div class="dates-empty">Belum ada tanggal libur</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status hari ini -->
+      <div class="panel" style="margin-top:4px;">
+        <div class="ph"><span class="ph-ico">◈</span><span class="ph-txt">Status Hari Ini</span><div class="ph-line"></div></div>
+        <div style="padding:16px;position:relative;z-index:2;" id="today-status-wrap">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:.65rem;color:#c0b0d8;">Memuat...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <footer class="footer">◈ SHADOW SYSTEM v3.0 · SANTRI QUEST · PETIK 2 JOMBANG · I ALONE LEVEL UP</footer>
 </div>
 
@@ -1095,6 +1203,13 @@ const DEF_QUESTS=[
   {id:6,title:"Membersihkan Kamar",desc:"Bersihkan dan rapikan kamar tidur",exp:20,agama:0,it:0,dis:1,akhlak:1,deadline:"09:00",penalty:10,custom:false,icon:"🧹",durationH:0},
   {id:7,title:"Membantu Teman",desc:"Bantu teman yang kesulitan dengan ikhlas",exp:30,agama:0,it:0,dis:0,akhlak:2,deadline:"22:00",penalty:5,custom:false,icon:"🤝",durationH:0},
 ];
+
+function isHolidayDate(tgl){
+  const st=getSettings();
+  const now=new Date(tgl+"T12:00:00");
+  const dayOfWeek=now.getDay();
+  return st.holidayDays.includes(dayOfWeek)||st.holidayDates.includes(tgl);
+}
 
 function getQuests(){
   const tgl=todayStr();
@@ -1377,8 +1492,23 @@ function checkExpired(){
 }
 
 function renderQuests(){
-  const qs=checkExpired();
+  const tgl=todayStr();
   const list=document.getElementById("quest-list");
+  // Check holiday
+  if(isHolidayDate(tgl)){
+    const st=getSettings();
+    const now=new Date();
+    const dayName=DAYS_ID[now.getDay()];
+    list.innerHTML=`
+      <div style="text-align:center;padding:28px 16px;">
+        <div style="font-size:3rem;margin-bottom:14px;">🎉</div>
+        <div style="font-family:'Black Han Sans',sans-serif;font-size:1.3rem;color:#f87171;letter-spacing:4px;text-shadow:0 0 20px rgba(220,38,38,.4);">HARI LIBUR</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:.65rem;color:#f0b0b0;letter-spacing:2px;margin-top:8px;">Quest dikunci untuk hari ini</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:.58rem;color:#9080b0;margin-top:5px;">Istirahat dan nikmati harimu! ✦</div>
+      </div>`;
+    return;
+  }
+  const qs=checkExpired();
   if(!qs.length){list.innerHTML=`<div class="loading-msg">NO QUESTS</div>`;return;}
   list.innerHTML=qs.map(q=>{
     const sc=q.failed?"failed":q.completed?"done":q.custom?"custom-card":"";
@@ -1836,6 +1966,7 @@ function showPage(name){
   if(name==="calendar")renderCal();
   if(name==="charts")renderCharts();
   if(name==="map")renderMap();
+  if(name==="settings"){renderDayGrid();renderDatesList();renderTodayStatus();renderHolidayBanner();}
 }
 
 // ── KEYBOARD ───────────────────────────────────
@@ -1850,6 +1981,103 @@ setInterval(()=>{
   if(document.getElementById("page-dashboard").classList.contains("active"))renderQuests();
   renderPlayer();renderBoss();
 },60000);
+
+// ── SETTINGS & HOLIDAY ───────────────────────
+const MONTHS_ID=["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+const DAYS_ID=["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+
+function getSettings(){return LS.g("sq3_settings",{holidayDays:[],holidayDates:[]});}
+function saveSettingsData(s){LS.s("sq3_settings",s);}
+
+function isHolidayToday(){
+  const st=getSettings(),now=new Date(),tgl=todayStr(),dow=now.getDay();
+  if(st.holidayDays.includes(dow))return{is:true,reason:`Hari ${DAYS_ID[dow]} adalah hari libur`};
+  if(st.holidayDates.includes(tgl)){const[y,m,d]=tgl.split("-");return{is:true,reason:`${d} ${MONTHS_ID[parseInt(m)-1]} ${y} adalah hari libur`};}
+  return{is:false,reason:""};
+}
+
+function toggleDay(day){
+  const st=getSettings();const idx=st.holidayDays.indexOf(day);
+  if(idx>=0)st.holidayDays.splice(idx,1);else st.holidayDays.push(day);
+  saveSettingsData(st);renderDayGrid();
+}
+
+function addHolidayDate(){
+  const val=document.getElementById("date-input").value;
+  if(!val){alert("Pilih tanggal dulu!");return;}
+  const st=getSettings();
+  if(st.holidayDates.includes(val)){alert("Tanggal ini sudah ada!");return;}
+  st.holidayDates.push(val);st.holidayDates.sort();
+  saveSettingsData(st);
+  document.getElementById("date-input").value="";
+  renderDatesList();renderTodayStatus();
+}
+
+function removeHolidayDate(date){
+  const st=getSettings();st.holidayDates=st.holidayDates.filter(d=>d!==date);
+  saveSettingsData(st);renderDatesList();renderTodayStatus();
+}
+
+function saveSettings(){
+  renderTodayStatus();renderQuests();playSound("complete");
+  const n=document.getElementById("saveNotif");
+  n.textContent="✦ PENGATURAN DISIMPAN";n.classList.add("show");
+  setTimeout(()=>{n.classList.remove("show");n.textContent="✦ PROFILE UPDATED";},2500);
+}
+
+function renderDayGrid(){
+  const st=getSettings();
+  document.querySelectorAll(".day-btn").forEach(btn=>{
+    const day=parseInt(btn.getAttribute("data-day"));
+    btn.classList.toggle("active",st.holidayDays.includes(day));
+  });
+}
+
+function renderDatesList(){
+  const st=getSettings();const list=document.getElementById("dates-list");if(!list)return;
+  if(!st.holidayDates.length){list.innerHTML=`<div class="dates-empty">Belum ada tanggal libur</div>`;return;}
+  list.innerHTML=st.holidayDates.map(d=>{
+    const[y,m,day]=d.split("-");const now=new Date(d+"T12:00:00");const dn=DAYS_ID[now.getDay()];
+    return`<div class="date-item">
+      <span class="date-item-txt">📅 ${dn}, ${day} ${MONTHS_ID[parseInt(m)-1]} ${y}</span>
+      <button class="date-item-del" onclick="removeHolidayDate('${d}')" title="Hapus">✕</button>
+    </div>`;
+  }).join("");
+}
+
+function renderTodayStatus(){
+  const wrap=document.getElementById("today-status-wrap");if(!wrap)return;
+  const holiday=isHolidayToday();const now=new Date();
+  const dn=DAYS_ID[now.getDay()];const tgl=todayStr();const[y,m,d]=tgl.split("-");
+  if(holiday.is){
+    wrap.innerHTML=`<div style="display:flex;align-items:center;gap:14px;">
+      <span style="font-size:2rem">🎉</span>
+      <div>
+        <div style="font-family:'Black Han Sans',sans-serif;font-size:1rem;color:#f87171;letter-spacing:2px;">HARI LIBUR</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:.65rem;color:#f0b0b0;margin-top:3px;">${holiday.reason}</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:.58rem;color:#9080b0;margin-top:2px;">${dn}, ${d} ${MONTHS_ID[parseInt(m)-1]} ${y} — Quest dikunci</div>
+      </div></div>`;
+  } else {
+    wrap.innerHTML=`<div style="display:flex;align-items:center;gap:14px;">
+      <span style="font-size:2rem">⚔️</span>
+      <div>
+        <div style="font-family:'Black Han Sans',sans-serif;font-size:1rem;color:var(--emerge);letter-spacing:2px;">HARI AKTIF</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:.65rem;color:#b0e0c0;margin-top:3px;">${dn}, ${d} ${MONTHS_ID[parseInt(m)-1]} ${y}</div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:.58rem;color:#9080b0;margin-top:2px;">Quest tersedia — Semangat! ✦</div>
+      </div></div>`;
+  }
+}
+
+function renderHolidayBanner(){
+  const wrap=document.getElementById("holiday-banner-wrap");if(!wrap)return;
+  const holiday=isHolidayToday();
+  if(holiday.is){
+    wrap.innerHTML=`<div class="holiday-banner">
+      <div class="holiday-banner-title">🎉 HARI LIBUR</div>
+      <div class="holiday-banner-sub">${holiday.reason} — Istirahat dan nikmati harimu!</div>
+    </div>`;
+  } else wrap.innerHTML="";
+}
 
 // ── INIT ───────────────────────────────────────
 renderPlayer();
