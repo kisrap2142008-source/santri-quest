@@ -850,9 +850,69 @@ button:hover,.nav-btn:hover,.q-btn:hover,.save-btn:hover,.nm-save:hover,.aq-save
   to{opacity:1;transform:translateY(0);}
 }
 .panel-animate{animation:panel-in .5s ease forwards;}
+
+/* ══ TOOLTIP SYSTEM ══════════════════════════ */
+.tooltip-wrap{position:relative;display:inline-block;}
+.tooltip{
+  position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) scale(.85);
+  background:linear-gradient(135deg,rgba(13,7,32,.98),rgba(8,4,20,.98));
+  border:1px solid var(--purple);
+  color:#d8c8f0;font-family:'Share Tech Mono',monospace;font-size:.6rem;
+  letter-spacing:1px;padding:6px 12px;white-space:nowrap;
+  pointer-events:none;opacity:0;transition:all .18s cubic-bezier(.34,1.56,.64,1);
+  clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));
+  box-shadow:var(--glow-purple),0 4px 20px rgba(0,0,0,.5);
+  z-index:9000;}
+.tooltip::after{
+  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:5px solid transparent;border-top-color:var(--purple);}
+.tooltip-wrap:hover .tooltip{opacity:1;transform:translateX(-50%) scale(1) translateY(-2px);}
+
+/* Stat tooltip — color coded */
+.tooltip.gold{border-color:var(--gold);box-shadow:var(--glow-gold);}
+.tooltip.gold::after{border-top-color:var(--gold);}
+.tooltip.ice{border-color:var(--ice);box-shadow:var(--glow-ice);}
+.tooltip.ice::after{border-top-color:var(--ice);}
+.tooltip.green{border-color:var(--emerge);box-shadow:var(--glow-green);}
+.tooltip.green::after{border-top-color:var(--emerge);}
+.tooltip.purple{border-color:var(--purple-glow);}
+
+/* ══ TOP LOADING BAR ═════════════════════════ */
+#loading-bar{
+  position:fixed;top:0;left:0;height:2px;width:0%;z-index:99999;
+  background:linear-gradient(90deg,var(--purple),var(--ice),var(--purple-glow));
+  box-shadow:0 0 8px rgba(168,85,247,.8),0 0 20px rgba(103,232,249,.4);
+  transition:width .25s ease,opacity .3s ease;
+  pointer-events:none;opacity:0;}
+#loading-bar.active{opacity:1;}
+#loading-bar::after{
+  content:'';position:absolute;right:0;top:-2px;
+  width:80px;height:6px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(192,132,252,.8),transparent);
+  filter:blur(3px);}
+
+/* ══ RIPPLE UPGRADE ══════════════════════════ */
+.ripple{
+  position:absolute;border-radius:50%;
+  background:radial-gradient(circle,rgba(168,85,247,.5),rgba(103,232,249,.2));
+  transform:scale(0);animation:ripple-anim .55s cubic-bezier(0,.5,.5,1);
+  pointer-events:none;z-index:999;}
+@keyframes ripple-anim{
+  0%{transform:scale(0);opacity:.8;}
+  100%{transform:scale(4);opacity:0;}}
+
+/* ══ STAT COUNTER ════════════════════════════ */
+.stat-num.counting{
+  animation:stat-pop .3s cubic-bezier(.34,1.56,.64,1);
+  color:#fff!important;text-shadow:0 0 12px currentColor!important;}
+@keyframes stat-pop{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.5);}
+  100%{transform:scale(1);}}
 </style>
 </head>
 <body>
+<div id="loading-bar"></div>
 <div class="bg-void"></div>
 <div class="particles"></div>
 <canvas id="particle-canvas"></canvas>
@@ -983,18 +1043,18 @@ button:hover,.nav-btn:hover,.q-btn:hover,.save-btn:hover,.nm-save:hover,.aq-save
             <div class="stat-row"><span class="stat-ico"><span class="sl-icon svg-glow-purple"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
   <path d="M12 2L2 7l10 5 10-5-10-5z"/>
   <path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
-</svg></span></span><div class="stat-data"><div class="stat-lbl"><span>Ilmu Agama</span><span class="stat-num ca" id="stat-agama">0</span></div><div class="stat-trk"><div class="stat-fill sa" id="stat-agama-bar"></div></div></div></div>
+</svg></span></span><div class="stat-data"><div class="stat-lbl" title="Dari quest mengaji &amp; membaca"><span>Ilmu Agama</span><span class="stat-num ca" id="stat-agama">0</span></div><div class="stat-trk"><div class="stat-fill sa" id="stat-agama-bar"></div></div></div></div>
             <div class="stat-row"><span class="stat-ico"><span class="sl-icon svg-glow-ice"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#67e8f9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
   <polyline points="16,18 22,12 16,6"/><polyline points="8,6 2,12 8,18"/>
   <line x1="12" y1="2" x2="12" y2="22"/>
-</svg></span></span><div class="stat-data"><div class="stat-lbl"><span>Ilmu IT</span><span class="stat-num ci" id="stat-it">0</span></div><div class="stat-trk"><div class="stat-fill si" id="stat-it-bar"></div></div></div></div>
+</svg></span></span><div class="stat-data"><div class="stat-lbl" title="Dari quest belajar IT &amp; coding"><span>Ilmu IT</span><span class="stat-num ci" id="stat-it">0</span></div><div class="stat-trk"><div class="stat-fill si" id="stat-it-bar"></div></div></div></div>
             <div class="stat-row"><span class="stat-ico"><span class="sl-icon svg-glow-gold"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
   <circle cx="12" cy="12" r="10"/>
   <polyline points="12,6 12,12 16,14"/>
-</svg></span></span><div class="stat-data"><div class="stat-lbl"><span>Kedisiplinan</span><span class="stat-num cd" id="stat-disiplin">0</span></div><div class="stat-trk"><div class="stat-fill sd" id="stat-disiplin-bar"></div></div></div></div>
+</svg></span></span><div class="stat-data"><div class="stat-lbl" title="Dari quest olahraga &amp; kebersihan"><span>Kedisiplinan</span><span class="stat-num cd" id="stat-disiplin">0</span></div><div class="stat-trk"><div class="stat-fill sd" id="stat-disiplin-bar"></div></div></div></div>
             <div class="stat-row"><span class="stat-ico"><span class="sl-icon svg-glow-green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-</svg></span></span><div class="stat-data"><div class="stat-lbl"><span>Akhlak</span><span class="stat-num ck" id="stat-akhlak">0</span></div><div class="stat-trk"><div class="stat-fill sk" id="stat-akhlak-bar"></div></div></div></div>
+</svg></span></span><div class="stat-data"><div class="stat-lbl" title="Dari quest membantu teman &amp; sholat"><span>Akhlak</span><span class="stat-num ck" id="stat-akhlak">0</span></div><div class="stat-trk"><div class="stat-fill sk" id="stat-akhlak-bar"></div></div></div></div>
           </div>
         </div>
         <div class="panel">
@@ -2585,6 +2645,105 @@ const panelObserver=new IntersectionObserver(entries=>{
   });
 },{threshold:.1});
 document.querySelectorAll(".panel").forEach(p=>panelObserver.observe(p));
+
+// ══ LOADING BAR ══════════════════════════════
+const LoadingBar={
+  bar:null,
+  init(){this.bar=document.getElementById("loading-bar");},
+  start(){
+    if(!this.bar)return;
+    this.bar.style.width="0%";this.bar.classList.add("active");
+    this.bar.style.transition="width .08s ease";
+    // Fast progress to 80%
+    setTimeout(()=>{this.bar.style.transition="width .4s ease";this.bar.style.width="80%";},50);
+  },
+  done(){
+    if(!this.bar)return;
+    this.bar.style.transition="width .2s ease";this.bar.style.width="100%";
+    setTimeout(()=>{
+      this.bar.style.transition="opacity .3s ease";this.bar.classList.remove("active");
+      setTimeout(()=>{this.bar.style.width="0%";},300);
+    },200);
+  }
+};
+LoadingBar.init();
+
+// ══ UPGRADED RIPPLE — colored per element ════
+document.addEventListener("click",function(e){
+  const el=e.target.closest("button,.nav-btn,.q-btn,.save-btn,.nm-save,.aq-save,.boss-btn,.cal-day,.ach-item,.viol-btn,.hcal-day,.day-btn");
+  if(!el)return;
+  const existing=el.querySelector(".ripple");if(existing)existing.remove();
+  const r=document.createElement("div");r.className="ripple";
+  const rect=el.getBoundingClientRect();
+  const size=Math.max(rect.width,rect.height)*2.5;
+  r.style.cssText=`width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px;`;
+  // Color based on element type
+  if(el.classList.contains("viol-btn"))
+    r.style.background="radial-gradient(circle,rgba(220,38,38,.45),rgba(239,68,68,.1))";
+  else if(el.classList.contains("day-btn")||el.classList.contains("hcal-day"))
+    r.style.background="radial-gradient(circle,rgba(168,85,247,.4),rgba(124,58,237,.1))";
+  else if(el.classList.contains("q-btn"))
+    r.style.background="radial-gradient(circle,rgba(103,232,249,.4),rgba(124,58,237,.15))";
+  el.style.position="relative";el.style.overflow="hidden";
+  el.appendChild(r);setTimeout(()=>r.remove(),600);
+},true);
+
+// ══ STAT COUNTER ANIMATION ════════════════════
+function animateStat(id,from,to){
+  const el=document.getElementById(id);if(!el||from===to)return;
+  el.classList.add("counting");
+  const dur=600,start=performance.now();
+  const step=now=>{
+    const p=Math.min((now-start)/dur,1);
+    const ease=1-Math.pow(1-p,3);
+    el.textContent=Math.round(from+((to-from)*ease));
+    if(p<1)requestAnimationFrame(step);
+    else{el.textContent=to;setTimeout(()=>el.classList.remove("counting"),200);}
+  };
+  requestAnimationFrame(step);
+}
+
+// Patch setStat to use animation
+const _origSetStat=setStat;
+const _statPrev={agama:0,it:0,disiplin:0,akhlak:0};
+function setStat(k,v){
+  const el=document.getElementById(`stat-${k}`);
+  const prev=_statPrev[k]||0;
+  if(el&&v!==prev&&prev>0)animateStat(`stat-${k}`,prev,v);
+  else if(el)el.textContent=v;
+  _statPrev[k]=v;
+  const b=document.getElementById(`stat-${k}-bar`);
+  if(b)b.style.width=Math.min((v/50)*100,100)+"%";
+}
+
+// Patch showPage to show loading bar
+const _origShowPage=showPage;
+function showPage(name){
+  LoadingBar.start();
+  setTimeout(()=>{_origShowPage(name);LoadingBar.done();},120);
+}
+
+// ══ CUSTOM TOOLTIP SYSTEM ════════════════════
+(function initTooltips(){
+  // Quest card tooltips — show EXP on hover
+  document.addEventListener("mouseover",e=>{
+    const card=e.target.closest(".quest-card:not(.done):not(.failed)");
+    if(!card||card._tip)return;
+    const expSpan=card.querySelector(".rexp");
+    if(!expSpan)return;
+    const tip=document.createElement("div");
+    tip.className="tooltip";tip.style.bottom="calc(100% + 8px)";tip.style.left="50%";
+    tip.style.transform="translateX(-50%)";
+    const exp=expSpan.textContent;
+    tip.textContent=`Klik COMPLETE untuk dapatkan ${exp}`;
+    card.style.position="relative";card.appendChild(tip);card._tip=tip;
+    requestAnimationFrame(()=>{tip.style.opacity="1";tip.style.transform="translateX(-50%) translateY(-2px)";});
+  });
+  document.addEventListener("mouseout",e=>{
+    const card=e.target.closest(".quest-card");
+    if(card&&card._tip){card._tip.remove();delete card._tip;}
+  });
+})();
 
 // ── INIT ───────────────────────────────────────
 renderPlayer();
