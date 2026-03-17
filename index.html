@@ -1603,17 +1603,46 @@ function playSound(type){
       g.gain.setValueAtTime(.2,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.3);
       o.start();o.stop(ctx.currentTime+.3);
     } else if(type==="typekey"){
-      // Solo Leveling typewriter — subtle electronic tick
-      const o=ctx.createOscillator(),g=ctx.createGain(),f=ctx.createBiquadFilter();
-      o.connect(f);f.connect(g);g.connect(ctx.destination);
-      o.type="square";f.type="bandpass";f.frequency.value=2000;f.Q.value=8;
-      // Random pitch variation for natural feel
-      const baseFreq=800+Math.random()*400;
-      o.frequency.setValueAtTime(baseFreq,ctx.currentTime);
-      o.frequency.exponentialRampToValueAtTime(baseFreq*.7,ctx.currentTime+.025);
-      g.gain.setValueAtTime(.08,ctx.currentTime);
-      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.04);
-      o.start();o.stop(ctx.currentTime+.04);
+      // Gaming keyboard — deep tactile click (3 layered sounds)
+      // Layer 1: Initial sharp transient (the "click")
+      const buf=ctx.createBuffer(1,ctx.sampleRate*.06,ctx.sampleRate);
+      const data=buf.getChannelData(0);
+      for(let i=0;i<data.length;i++){
+        // White noise burst that decays quickly — simulates key impact
+        const t=i/ctx.sampleRate;
+        const env=t<.002?t/.002:Math.exp(-(t-.002)*120);
+        data[i]=(Math.random()*2-1)*env*.9;
+      }
+      const noise=ctx.createBufferSource();
+      noise.buffer=buf;
+      const noiseFilter=ctx.createBiquadFilter();
+      noiseFilter.type="bandpass";
+      noiseFilter.frequency.value=2800+Math.random()*400;
+      noiseFilter.Q.value=1.2;
+      const noiseGain=ctx.createGain();
+      noiseGain.gain.setValueAtTime(.22,ctx.currentTime);
+      noiseGain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.055);
+      noise.connect(noiseFilter);noiseFilter.connect(noiseGain);noiseGain.connect(ctx.destination);
+      noise.start();noise.stop(ctx.currentTime+.06);
+      // Layer 2: Low thud — the "depth" of gaming key
+      const thud=ctx.createOscillator(),thudG=ctx.createGain();
+      thud.connect(thudG);thudG.connect(ctx.destination);
+      thud.type="sine";
+      const thudFreq=55+Math.random()*20;
+      thud.frequency.setValueAtTime(thudFreq*2,ctx.currentTime);
+      thud.frequency.exponentialRampToValueAtTime(thudFreq,ctx.currentTime+.025);
+      thudG.gain.setValueAtTime(.18,ctx.currentTime);
+      thudG.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.05);
+      thud.start();thud.stop(ctx.currentTime+.055);
+      // Layer 3: High click tick (the tactile feedback)
+      const tick=ctx.createOscillator(),tickG=ctx.createGain();
+      tick.connect(tickG);tickG.connect(ctx.destination);
+      tick.type="square";
+      tick.frequency.setValueAtTime(1800,ctx.currentTime);
+      tick.frequency.exponentialRampToValueAtTime(400,ctx.currentTime+.012);
+      tickG.gain.setValueAtTime(.07,ctx.currentTime);
+      tickG.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.015);
+      tick.start();tick.stop(ctx.currentTime+.016);
     } else if(type==="notif"){
       // Solo Leveling style — two-tone electronic system chime
       // High electronic beep + low resonant hum like the anime
