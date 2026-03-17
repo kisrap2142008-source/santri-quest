@@ -653,25 +653,33 @@ button:hover,.nav-btn:hover,.q-btn:hover,.save-btn:hover,.nm-save:hover,.aq-save
   box-shadow:0 0 10px rgba(220,38,38,.2);}
 .day-btn.active:hover{background:rgba(220,38,38,.25);box-shadow:0 0 15px rgba(220,38,38,.3);}
 /* Date picker */
-.date-input-row{display:flex;gap:8px;margin-bottom:10px;}
-.date-in{background:rgba(124,58,237,.07);border:1px solid var(--border-mid);color:#d8c8f0;
-  font-family:'Share Tech Mono',monospace;font-size:.72rem;padding:8px 10px;outline:none;flex:1;}
-.date-in:focus{border-color:var(--purple);box-shadow:0 0 0 2px rgba(124,58,237,.2);}
-.date-add-btn{background:rgba(124,58,237,.15);border:1px solid var(--purple);color:#d4a0ff;
-  font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:1px;padding:8px 14px;
-  cursor:pointer;white-space:nowrap;transition:all .2s;}
-.date-add-btn:hover{background:rgba(124,58,237,.3);color:#fff;box-shadow:var(--glow-purple);}
-/* Dates list */
-.dates-list{display:flex;flex-direction:column;gap:5px;max-height:220px;overflow-y:auto;}
+.hcal-header{display:flex;align-items:center;justify-content:space-between;padding:8px 4px;margin-bottom:8px;}
+.hcal-nav{background:transparent;border:1px solid var(--border-mid);color:#a090c0;
+  font-family:'Share Tech Mono',monospace;font-size:.65rem;padding:5px 12px;cursor:pointer;transition:all .2s;border-radius:2px;}
+.hcal-nav:hover{border-color:var(--purple);color:#d4a0ff;box-shadow:var(--glow-purple);}
+.hcal-month{font-family:'Black Han Sans',sans-serif;font-size:.95rem;color:#e0d0f8;letter-spacing:2px;}
+.hcal-grid-hdr{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;margin-bottom:4px;}
+.hcal-dlbl{font-family:'Share Tech Mono',monospace;font-size:.52rem;color:#8a7aaa;padding:3px 0;}
+.hcal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.hcal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  border:1px solid transparent;border-radius:4px;cursor:pointer;transition:all .18s cubic-bezier(.34,1.56,.64,1);
+  font-family:'Share Tech Mono',monospace;font-size:.62rem;color:#c0b0d8;position:relative;}
+.hcal-day:hover{border-color:var(--purple);background:rgba(124,58,237,.15);color:#e0d0f8;transform:scale(1.1);}
+.hcal-day.today{border-color:rgba(124,58,237,.5);background:rgba(124,58,237,.1);color:#d4a0ff;}
+.hcal-day.holiday{background:rgba(220,38,38,.18);border-color:var(--crimson);color:#f87171;box-shadow:0 0 8px rgba(220,38,38,.2);}
+.hcal-day.holiday:hover{background:rgba(220,38,38,.1);border-color:rgba(220,38,38,.4);}
+.hcal-day.holiday::after{content:'';position:absolute;bottom:2px;width:4px;height:4px;border-radius:50%;background:var(--crimson);}
+.hcal-day.other-m{opacity:.2;pointer-events:none;}
+.hcal-day.weekly-off{background:rgba(168,85,247,.1);border-color:rgba(168,85,247,.3);color:#c084fc;}
+.hcal-hint{font-family:'Share Tech Mono',monospace;font-size:.53rem;color:#7060a0;margin-top:8px;line-height:1.6;}
+.dates-list{display:flex;flex-direction:column;gap:5px;max-height:160px;overflow-y:auto;margin-top:10px;}
 .date-item{display:flex;align-items:center;justify-content:space-between;
   background:rgba(220,38,38,.07);border:1px solid rgba(220,38,38,.2);border-left:2px solid var(--crimson);
-  padding:8px 12px;
-  clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));}
-.date-item-txt{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:#f0c0c0;letter-spacing:1px;}
-.date-item-del{background:transparent;border:none;color:var(--crimson-glow);font-size:.85rem;
-  cursor:pointer;padding:2px 6px;opacity:.6;transition:opacity .2s;}
+  padding:7px 12px;clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));}
+.date-item-txt{font-family:'Share Tech Mono',monospace;font-size:.63rem;color:#f0c0c0;letter-spacing:1px;}
+.date-item-del{background:transparent;border:none;color:var(--crimson-glow);font-size:.85rem;cursor:pointer;padding:2px 6px;opacity:.6;transition:opacity .2s;}
 .date-item-del:hover{opacity:1;}
-.dates-empty{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:#8a7aaa;text-align:center;padding:16px 0;}
+.dates-empty{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:#8a7aaa;text-align:center;padding:12px 0;}
 /* Holiday indicator */
 .holiday-banner{
   background:linear-gradient(90deg,rgba(220,38,38,.12),rgba(124,58,237,.08));
@@ -1164,11 +1172,27 @@ button:hover,.nav-btn:hover,.q-btn:hover,.save-btn:hover,.nm-save:hover,.aq-save
         <div class="panel">
           <div class="ph"><span class="ph-ico">📅</span><span class="ph-txt">Tanggal Libur Spesifik</span><div class="ph-line"></div></div>
           <div class="set-section">
-            <div class="set-title">Tambah tanggal tertentu sebagai hari libur:</div>
-            <div class="date-input-row">
-              <input class="date-in" type="date" id="date-input">
-              <button class="date-add-btn" onclick="addHolidayDate()">＋ TAMBAH</button>
+            <div class="set-title">Klik tanggal untuk toggle hari libur:</div>
+            <!-- Calendar Header -->
+            <div class="hcal-header">
+              <button class="hcal-nav" onclick="hcalPrev()">◀</button>
+              <span class="hcal-month" id="hcal-month-txt">—</span>
+              <button class="hcal-nav" onclick="hcalNext()">▶</button>
             </div>
+            <!-- Day labels -->
+            <div class="hcal-grid-hdr">
+              <span class="hcal-dlbl">MIN</span><span class="hcal-dlbl">SEN</span>
+              <span class="hcal-dlbl">SEL</span><span class="hcal-dlbl">RAB</span>
+              <span class="hcal-dlbl">KAM</span><span class="hcal-dlbl">JUM</span>
+              <span class="hcal-dlbl">SAB</span>
+            </div>
+            <!-- Calendar grid -->
+            <div class="hcal-grid" id="hcal-grid"></div>
+            <div class="hcal-hint">
+              🟣 Ungu = hari libur mingguan &nbsp;|&nbsp; 🔴 Merah = tanggal libur spesifik<br>
+              Klik tanggal untuk tambah/hapus hari libur
+            </div>
+            <!-- Selected dates list -->
             <div class="dates-list" id="dates-list">
               <div class="dates-empty">Belum ada tanggal libur</div>
             </div>
@@ -2036,7 +2060,7 @@ function showPage(name){
   if(name==="calendar")renderCal();
   if(name==="charts")renderCharts();
   if(name==="map")renderMap();
-  if(name==="settings"){renderDayGrid();renderDatesList();renderTodayStatus();renderHolidayBanner();}
+  if(name==="settings"){renderDayGrid();renderDatesList();renderTodayStatus();renderHolidayBanner();renderHcal();}
 }
 
 // ── KEYBOARD ───────────────────────────────────
@@ -2072,20 +2096,61 @@ function toggleDay(day){
   saveSettingsData(st);renderDayGrid();
 }
 
-function addHolidayDate(){
-  const val=document.getElementById("date-input").value;
-  if(!val){alert("Pilih tanggal dulu!");return;}
+// ── HOLIDAY CALENDAR ──────────────────────────
+let hcalYear=new Date().getFullYear(), hcalMonth=new Date().getMonth();
+
+function hcalPrev(){hcalMonth--;if(hcalMonth<0){hcalMonth=11;hcalYear--;}renderHcal();}
+function hcalNext(){hcalMonth++;if(hcalMonth>11){hcalMonth=0;hcalYear++;}renderHcal();}
+
+function renderHcal(){
   const st=getSettings();
-  if(st.holidayDates.includes(val)){alert("Tanggal ini sudah ada!");return;}
-  st.holidayDates.push(val);st.holidayDates.sort();
+  const now=new Date();
+  const todayTgl=todayStr();
+  const months=["JANUARI","FEBRUARI","MARET","APRIL","MEI","JUNI","JULI","AGUSTUS","SEPTEMBER","OKTOBER","NOVEMBER","DESEMBER"];
+  document.getElementById("hcal-month-txt").textContent=`${months[hcalMonth]} ${hcalYear}`;
+
+  const firstDay=new Date(hcalYear,hcalMonth,1).getDay();
+  const daysInMonth=new Date(hcalYear,hcalMonth+1,0).getDate();
+  let html="";
+
+  // Empty cells
+  for(let i=0;i<firstDay;i++)
+    html+=`<div class="hcal-day other-m"></div>`;
+
+  for(let d=1;d<=daysInMonth;d++){
+    const dateStr=`${hcalYear}-${String(hcalMonth+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const dayOfWeek=new Date(dateStr+"T12:00:00").getDay();
+    const isToday=dateStr===todayTgl;
+    const isHoliday=st.holidayDates.includes(dateStr);
+    const isWeeklyOff=st.holidayDays.includes(dayOfWeek);
+    let cls="hcal-day";
+    if(isToday)cls+=" today";
+    if(isHoliday)cls+=" holiday";
+    else if(isWeeklyOff)cls+=" weekly-off";
+    html+=`<div class="${cls}" onclick="toggleHolidayDate('${dateStr}')" title="${dateStr}">${d}</div>`;
+  }
+  document.getElementById("hcal-grid").innerHTML=html;
+}
+
+function toggleHolidayDate(date){
+  const st=getSettings();
+  const idx=st.holidayDates.indexOf(date);
+  if(idx>=0) st.holidayDates.splice(idx,1);
+  else{st.holidayDates.push(date);st.holidayDates.sort();}
   saveSettingsData(st);
-  document.getElementById("date-input").value="";
-  renderDatesList();renderTodayStatus();
+  renderHcal();
+  renderDatesList();
+  renderTodayStatus();
+  playSound("complete");
 }
 
 function removeHolidayDate(date){
-  const st=getSettings();st.holidayDates=st.holidayDates.filter(d=>d!==date);
-  saveSettingsData(st);renderDatesList();renderTodayStatus();
+  const st=getSettings();
+  st.holidayDates=st.holidayDates.filter(d=>d!==date);
+  saveSettingsData(st);
+  renderHcal();
+  renderDatesList();
+  renderTodayStatus();
 }
 
 function saveSettings(){
