@@ -718,11 +718,117 @@ button:hover,.nav-btn:hover,.q-btn:hover,.save-btn:hover,.nm-save:hover,.aq-save
 .svg-glow-ice{filter:drop-shadow(0 0 6px rgba(103,232,249,.8));}
 .svg-glow-green{filter:drop-shadow(0 0 6px rgba(74,222,128,.8));}
 .svg-glow-red{filter:drop-shadow(0 0 6px rgba(220,38,38,.8));}
+
+/* ══════════════════════════════════════════
+   ANIMATION SYSTEM — Shadow System v3
+   ══════════════════════════════════════════ */
+
+/* 1. PAGE TRANSITION — fade + slide up */
+@keyframes page-enter{
+  from{opacity:0;transform:translateY(18px);}
+  to{opacity:1;transform:translateY(0);}
+}
+.page.active{animation:page-enter .35s cubic-bezier(.25,.46,.45,.94);}
+
+/* 2. MORE PARTICLES — additional floating orbs via JS canvas */
+#particle-canvas{position:fixed;inset:0;z-index:1;pointer-events:none;}
+
+/* 3. PANEL SHINE — light sweep across panels */
+@keyframes panel-shine{
+  0%{transform:translateX(-100%) skewX(-15deg);}
+  100%{transform:translateX(300%) skewX(-15deg);}
+}
+.panel::after{
+  content:'';position:absolute;top:0;left:0;width:40%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(168,85,247,.04),transparent);
+  transform:translateX(-100%) skewX(-15deg);
+  animation:panel-shine 6s ease-in-out infinite;
+  pointer-events:none;z-index:5;}
+
+/* 4. GLITCH EFFECT — occasional screen flicker */
+@keyframes glitch-h{
+  0%,94%,100%{clip-path:none;transform:none;}
+  95%{clip-path:inset(20% 0 60% 0);transform:translateX(-4px);}
+  96%{clip-path:inset(60% 0 20% 0);transform:translateX(4px);}
+  97%{clip-path:inset(40% 0 40% 0);transform:translateX(-2px);}
+  98%{clip-path:none;transform:none;}
+}
+.glitch-overlay{
+  position:fixed;inset:0;z-index:9997;pointer-events:none;
+  animation:glitch-h 8s ease-in-out infinite;
+  background:linear-gradient(transparent 20%,rgba(168,85,247,.015) 50%,transparent 80%);
+  opacity:0;}
+.glitch-overlay.active{opacity:1;}
+
+/* 5. EXP NUMBER COUNT-UP — handled by JS */
+.exp-counting{animation:exp-pop .3s cubic-bezier(.34,1.56,.64,1);}
+@keyframes exp-pop{from{transform:scale(1.4);color:var(--gold-bright);}to{transform:scale(1);}}
+
+/* ══════════════════════════════════════════
+   PROFILE PAGE ANIMATIONS
+   ══════════════════════════════════════════ */
+
+/* 6. AVATAR REVEAL — dungeon gate open effect */
+@keyframes av-reveal{
+  0%{clip-path:inset(50% 50% 50% 50%);opacity:0;filter:brightness(3);}
+  40%{clip-path:inset(0% 0% 0% 0%);opacity:1;filter:brightness(2);}
+  100%{filter:brightness(1);}
+}
+.av-big.revealed{animation:av-reveal .7s cubic-bezier(.25,.46,.45,.94) forwards;}
+
+/* Avatar hover — rotating light halo */
+.av-frame:hover .av-big{
+  box-shadow:var(--glow-purple),0 0 50px rgba(168,85,247,.5),inset 0 0 30px rgba(168,85,247,.15);
+}
+.av-frame::after{
+  content:'';position:absolute;inset:-4px;border-radius:12px;
+  background:conic-gradient(from 0deg,transparent 0deg,rgba(168,85,247,.6) 60deg,rgba(103,232,249,.4) 120deg,transparent 180deg,rgba(245,158,11,.3) 240deg,transparent 300deg,transparent 360deg);
+  animation:halo-spin 3s linear infinite;pointer-events:none;
+  opacity:0;transition:opacity .3s;}
+.av-frame:hover::after{opacity:1;}
+@keyframes halo-spin{to{transform:rotate(360deg);}}
+
+/* 7. RANK BADGE SHIMMER */
+@keyframes badge-shimmer{
+  0%,100%{box-shadow:var(--glow-gold);}
+  50%{box-shadow:0 0 25px rgba(245,158,11,.95),0 0 50px rgba(245,158,11,.5),0 0 80px rgba(245,158,11,.2);}
+}
+.rank-badge{animation:badge-shimmer 2.5s ease-in-out infinite;}
+
+/* 8. TYPEWRITER for hunter name */
+@keyframes cursor-blink{0%,100%{opacity:1;}50%{opacity:0;}}
+.typewriter-cursor{
+  display:inline-block;width:3px;height:1em;background:var(--purple-glow);
+  margin-left:3px;vertical-align:middle;
+  animation:cursor-blink .7s ease-in-out infinite;}
+
+/* 9. STAT BARS — staggered slide-in */
+@keyframes stat-slide{
+  from{width:0%!important;opacity:0;}
+  to{opacity:1;}
+}
+.stat-fill.animating{animation:stat-slide .8s cubic-bezier(.25,.46,.45,.94) forwards;}
+
+/* 10. INFO CARDS — fade in staggered */
+@keyframes card-in{
+  from{opacity:0;transform:translateX(-12px);}
+  to{opacity:1;transform:translateX(0);}
+}
+.info-item.anim{animation:card-in .4s ease forwards;}
+
+/* 11. PANEL ENTRY — each panel fades in on scroll */
+@keyframes panel-in{
+  from{opacity:0;transform:translateY(16px);}
+  to{opacity:1;transform:translateY(0);}
+}
+.panel-animate{animation:panel-in .5s ease forwards;}
 </style>
 </head>
 <body>
 <div class="bg-void"></div>
 <div class="particles"></div>
+<canvas id="particle-canvas"></canvas>
+<div class="glitch-overlay" id="glitch-overlay"></div>
 <div class="scanlines"></div>
 <div class="vignette"></div>
 <div class="save-notif" id="saveNotif">✦ PROFILE UPDATED</div>
@@ -1543,7 +1649,10 @@ function renderPlayer(){
   document.getElementById("player-status").textContent=p.status;
   document.getElementById("avatar-level").textContent=p.level;
   document.getElementById("level-value").textContent=p.level;
-  document.getElementById("exp-numbers").textContent=`${p.exp}/${expN(p.level)}`;
+  const expEl=document.getElementById("exp-numbers");
+  const oldExp=parseInt(expEl.textContent)||0;
+  if(Math.abs(p.exp-oldExp)>0&&oldExp>0){animateNumber(expEl,oldExp,p.exp);expEl.textContent=`${p.exp}/${expN(p.level)}`;}
+  else expEl.textContent=`${p.exp}/${expN(p.level)}`;
   document.getElementById("lv-next").textContent=`${expN(p.level)-p.exp} to next`;
   const pct=Math.min((p.exp/expN(p.level))*100,100);
   document.getElementById("exp-bar").style.width=pct+"%";
@@ -2027,6 +2136,8 @@ function loadProfile(){
     document.getElementById(`p-${k}`).textContent=v;
     document.getElementById(`p-${k}-bar`).style.width=Math.min(100,(v/mx)*100)+"%";
   });
+  // Trigger profile animations
+  setTimeout(animateProfileEntry, 50);
   document.getElementById("rankList").innerHTML=RANKS.map(rk=>`
     <div class="rank-row" style="opacity:${p.level>=rk.min&&p.level<=rk.max?1:.35}">
       <div class="rank-ico" style="color:${rk.c};border-color:${rk.c};${p.level>=rk.min&&p.level<=rk.max?`box-shadow:0 0 8px ${rk.c};background:${rk.c}22`:""}">${rk.l}</div>
@@ -2054,7 +2165,12 @@ function saveProfile(){
 function showPage(name){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
-  document.getElementById("page-"+name).classList.add("active");
+  const page=document.getElementById("page-"+name);
+  page.classList.add("active");
+  // Re-trigger animation
+  page.style.animation="none";
+  page.offsetHeight; // force reflow
+  page.style.animation="";
   document.getElementById("btn-"+name).classList.add("active");
   if(name==="profile")loadProfile();
   if(name==="calendar")renderCal();
@@ -2213,6 +2329,116 @@ function renderHolidayBanner(){
     </div>`;
   } else wrap.innerHTML="";
 }
+
+// ══════════════════════════════════════════════
+//  ANIMATION ENGINE
+// ══════════════════════════════════════════════
+
+// A. PARTICLE CANVAS — floating orbs
+(function initParticles(){
+  const canvas=document.getElementById("particle-canvas");
+  if(!canvas)return;
+  const ctx=canvas.getContext("2d");
+  let W,H,orbs=[];
+  const COLORS=["rgba(168,85,247,","rgba(103,232,249,","rgba(245,158,11,","rgba(74,222,128,"];
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+  function mkOrb(){
+    return{x:Math.random()*W,y:Math.random()*H,r:Math.random()*2+.5,
+      vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,
+      col:COLORS[Math.floor(Math.random()*COLORS.length)],
+      a:Math.random()*.6+.2,life:0,maxLife:200+Math.random()*300};
+  }
+  function init(){resize();for(let i=0;i<60;i++)orbs.push(mkOrb());}
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    orbs.forEach((o,i)=>{
+      o.x+=o.vx;o.y+=o.vy;o.life++;
+      if(o.life>o.maxLife||o.x<0||o.x>W||o.y<0||o.y>H){orbs[i]=mkOrb();return;}
+      const fade=o.life<20?o.life/20:o.life>o.maxLife-20?(o.maxLife-o.life)/20:1;
+      ctx.beginPath();ctx.arc(o.x,o.y,o.r,0,Math.PI*2);
+      ctx.fillStyle=o.col+(o.a*fade)+")";ctx.fill();
+      // glow
+      const g=ctx.createRadialGradient(o.x,o.y,0,o.x,o.y,o.r*4);
+      g.addColorStop(0,o.col+(o.a*.3*fade)+")");
+      g.addColorStop(1,o.col+"0)");
+      ctx.beginPath();ctx.arc(o.x,o.y,o.r*4,0,Math.PI*2);
+      ctx.fillStyle=g;ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener("resize",resize);
+  init();draw();
+})();
+
+// B. GLITCH — random flicker every 8-15s
+(function initGlitch(){
+  const el=document.getElementById("glitch-overlay");if(!el)return;
+  function glitch(){
+    el.classList.add("active");
+    setTimeout(()=>el.classList.remove("active"),300);
+    setTimeout(glitch,8000+Math.random()*7000);
+  }
+  setTimeout(glitch,5000);
+})();
+
+// C. EXP COUNT-UP ANIMATION
+function animateNumber(el,from,to,duration=800){
+  if(!el)return;
+  const start=performance.now();
+  const diff=to-from;
+  function step(now){
+    const p=Math.min((now-start)/duration,1);
+    const ease=1-Math.pow(1-p,3);
+    el.textContent=Math.round(from+diff*ease);
+    if(p<1)requestAnimationFrame(step);
+    else el.textContent=to;
+  }
+  requestAnimationFrame(step);
+}
+
+// D. PROFILE ANIMATIONS
+function animateProfileEntry(){
+  // Avatar reveal
+  const av=document.getElementById("avatarDisplay");
+  if(av){av.classList.remove("revealed");void av.offsetWidth;av.classList.add("revealed");}
+
+  // Typewriter for name
+  const nameEl=document.getElementById("displayNama");
+  if(nameEl){
+    const txt=nameEl.textContent;
+    nameEl.textContent="";
+    const cursor=document.createElement("span");
+    cursor.className="typewriter-cursor";nameEl.appendChild(cursor);
+    let i=0;
+    const type=()=>{
+      if(i<txt.length){nameEl.insertBefore(document.createTextNode(txt[i]),cursor);i++;setTimeout(type,60);}
+      else cursor.remove();
+    };
+    setTimeout(type,300);
+  }
+
+  // Stagger info cards
+  document.querySelectorAll(".info-item").forEach((el,i)=>{
+    el.style.opacity="0";
+    setTimeout(()=>{el.classList.add("anim");el.style.opacity="";},200+i*80);
+  });
+
+  // Stat bars — reset then animate
+  ["p-agama-bar","p-it-bar","p-dis-bar","p-akhlak-bar"].forEach((id,i)=>{
+    const bar=document.getElementById(id);if(!bar)return;
+    const target=bar.style.width;
+    bar.style.width="0%";
+    setTimeout(()=>{bar.style.transition="width 1s cubic-bezier(.25,.46,.45,.94)";bar.style.width=target;},400+i*100);
+  });
+}
+
+// E. PANEL ENTRY OBSERVER — animate panels as they appear
+const panelObserver=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add("panel-animate");panelObserver.unobserve(e.target);}
+  });
+},{threshold:.1});
+document.querySelectorAll(".panel").forEach(p=>panelObserver.observe(p));
 
 // ── INIT ───────────────────────────────────────
 renderPlayer();
