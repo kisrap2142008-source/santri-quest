@@ -768,39 +768,67 @@ button:hover,.nav-btn:hover,.q-btn:hover,.save-btn:hover,.nm-save:hover,.aq-save
    PROFILE PAGE ANIMATIONS
    ══════════════════════════════════════════ */
 
-/* 6. AVATAR REVEAL — dungeon gate open effect */
-@keyframes av-reveal{
-  0%{clip-path:inset(50% 50% 50% 50%);opacity:0;filter:brightness(3);}
-  40%{clip-path:inset(0% 0% 0% 0%);opacity:1;filter:brightness(2);}
-  100%{filter:brightness(1);}
+/* 6. AVATAR — dramatic layered reveal */
+@keyframes av-flash{
+  0%{opacity:0;filter:brightness(8) saturate(0);}
+  15%{opacity:1;filter:brightness(4) saturate(2);}
+  40%{filter:brightness(2) saturate(1.5);}
+  100%{filter:brightness(1) saturate(1);}
 }
-.av-big.revealed{animation:av-reveal .7s cubic-bezier(.25,.46,.45,.94) forwards;}
+@keyframes av-scale{
+  0%{transform:scale(.4);opacity:0;}
+  60%{transform:scale(1.06);}
+  80%{transform:scale(.97);}
+  100%{transform:scale(1);opacity:1;}
+}
+.av-big.revealed{animation:av-flash .9s ease forwards,av-scale .9s cubic-bezier(.34,1.56,.64,1) forwards;}
 
-/* Avatar hover — rotating light halo */
-.av-frame:hover .av-big{
-  box-shadow:var(--glow-purple),0 0 50px rgba(168,85,247,.5),inset 0 0 30px rgba(168,85,247,.15);
-}
+/* Avatar border — always rotating glow ring */
+.av-frame{overflow:visible!important;}
+.av-frame::before{
+  content:'';position:absolute;inset:-3px;border-radius:12px;z-index:0;
+  background:conic-gradient(from 0deg,var(--purple),var(--ice),var(--purple-glow),var(--purple));
+  animation:halo-spin 4s linear infinite;pointer-events:none;opacity:.5;}
+.av-frame:hover::before{opacity:1;}
 .av-frame::after{
-  content:'';position:absolute;inset:-4px;border-radius:12px;
-  background:conic-gradient(from 0deg,transparent 0deg,rgba(168,85,247,.6) 60deg,rgba(103,232,249,.4) 120deg,transparent 180deg,rgba(245,158,11,.3) 240deg,transparent 300deg,transparent 360deg);
-  animation:halo-spin 3s linear infinite;pointer-events:none;
-  opacity:0;transition:opacity .3s;}
+  content:'';position:absolute;inset:-6px;border-radius:14px;
+  background:conic-gradient(from 0deg,transparent,rgba(168,85,247,.4),transparent,rgba(103,232,249,.3),transparent);
+  animation:halo-spin 3s linear infinite reverse;pointer-events:none;opacity:0;transition:opacity .3s;}
 .av-frame:hover::after{opacity:1;}
 @keyframes halo-spin{to{transform:rotate(360deg);}}
+.av-big{position:relative;z-index:1;}
+.av-frame:hover .av-big{
+  box-shadow:var(--glow-purple),0 0 60px rgba(168,85,247,.6),inset 0 0 30px rgba(168,85,247,.2);
+  transform:scale(1.04);transition:all .3s;}
 
-/* 7. RANK BADGE SHIMMER */
+/* 7. RANK BADGE — pulse shimmer */
 @keyframes badge-shimmer{
-  0%,100%{box-shadow:var(--glow-gold);}
-  50%{box-shadow:0 0 25px rgba(245,158,11,.95),0 0 50px rgba(245,158,11,.5),0 0 80px rgba(245,158,11,.2);}
+  0%,100%{box-shadow:var(--glow-gold);transform:scale(1);}
+  50%{box-shadow:0 0 30px rgba(245,158,11,.99),0 0 60px rgba(245,158,11,.6),0 0 90px rgba(245,158,11,.25);transform:scale(1.05);}
 }
-.rank-badge{animation:badge-shimmer 2.5s ease-in-out infinite;}
+.rank-badge{animation:badge-shimmer 2s ease-in-out infinite;}
 
-/* 8. TYPEWRITER for hunter name */
-@keyframes cursor-blink{0%,100%{opacity:1;}50%{opacity:0;}}
+/* 8. TYPEWRITER CURSOR */
+@keyframes cursor-blink{0%,100%{opacity:1;background:var(--purple-glow);}50%{opacity:0;}}
+@keyframes cursor-appear{from{width:0;opacity:0;}to{width:3px;opacity:1;}}
 .typewriter-cursor{
-  display:inline-block;width:3px;height:1em;background:var(--purple-glow);
-  margin-left:3px;vertical-align:middle;
-  animation:cursor-blink .7s ease-in-out infinite;}
+  display:inline-block;width:3px;height:.9em;background:var(--purple-glow);
+  margin-left:2px;vertical-align:middle;border-radius:1px;
+  box-shadow:0 0 8px rgba(192,132,252,.8);
+  animation:cursor-blink .6s ease-in-out infinite;}
+
+/* Typewriter text glow effect */
+.typewriter-char{
+  display:inline;
+  animation:char-appear .1s ease forwards;
+}
+@keyframes char-appear{
+  from{opacity:0;text-shadow:0 0 20px var(--purple-glow),0 0 40px rgba(168,85,247,.8);}
+  to{opacity:1;text-shadow:0 0 8px rgba(168,85,247,.3);}
+}
+
+/* Panel header typewriter */
+.ph-txt-typing{overflow:hidden;white-space:nowrap;}
 
 /* 9. STAT BARS — staggered slide-in */
 @keyframes stat-slide{
@@ -1574,6 +1602,18 @@ function playSound(type){
       o.frequency.setValueAtTime(180,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(60,ctx.currentTime+.3);
       g.gain.setValueAtTime(.2,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.3);
       o.start();o.stop(ctx.currentTime+.3);
+    } else if(type==="typekey"){
+      // Solo Leveling typewriter — subtle electronic tick
+      const o=ctx.createOscillator(),g=ctx.createGain(),f=ctx.createBiquadFilter();
+      o.connect(f);f.connect(g);g.connect(ctx.destination);
+      o.type="square";f.type="bandpass";f.frequency.value=2000;f.Q.value=8;
+      // Random pitch variation for natural feel
+      const baseFreq=800+Math.random()*400;
+      o.frequency.setValueAtTime(baseFreq,ctx.currentTime);
+      o.frequency.exponentialRampToValueAtTime(baseFreq*.7,ctx.currentTime+.025);
+      g.gain.setValueAtTime(.08,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.04);
+      o.start();o.stop(ctx.currentTime+.04);
     } else if(type==="notif"){
       // Solo Leveling style — two-tone electronic system chime
       // High electronic beep + low resonant hum like the anime
@@ -2177,6 +2217,8 @@ function showPage(name){
   if(name==="charts")renderCharts();
   if(name==="map")renderMap();
   if(name==="settings"){renderDayGrid();renderDatesList();renderTodayStatus();renderHolidayBanner();renderHcal();}
+  // Typewrite panel headers on new page
+  setTimeout(typewritePanels, 200);
 }
 
 // ── KEYBOARD ───────────────────────────────────
@@ -2397,39 +2439,114 @@ function animateNumber(el,from,to,duration=800){
 }
 
 // D. PROFILE ANIMATIONS
-function animateProfileEntry(){
-  // Avatar reveal
-  const av=document.getElementById("avatarDisplay");
-  if(av){av.classList.remove("revealed");void av.offsetWidth;av.classList.add("revealed");}
+// ── TYPEWRITER ENGINE ─────────────────────────
+function typewrite(el, txt, speed=60, onDone=null, withSound=true){
+  if(!el||!txt)return;
+  el.innerHTML="";
+  const cursor=document.createElement("span");
+  cursor.className="typewriter-cursor";
+  el.appendChild(cursor);
+  let i=0;
+  const type=()=>{
+    if(i<txt.length){
+      // Create span with glow for each char
+      const ch=document.createElement("span");
+      ch.className="typewriter-char";
+      ch.textContent=txt[i]==="\n"?" ":txt[i];
+      el.insertBefore(ch,cursor);
+      if(withSound&&txt[i].trim()&&txt[i]!==" ")playSound("typekey");
+      i++;
+      // Vary speed slightly for natural feel
+      const delay=txt[i-1]===" "?speed*.5:speed+(Math.random()*20-10);
+      setTimeout(type,Math.max(20,delay));
+    } else {
+      // Remove cursor after short pause
+      setTimeout(()=>{
+        cursor.style.animation="none";cursor.style.opacity="0";
+        setTimeout(()=>cursor.remove(),300);
+      },600);
+      if(onDone)onDone();
+    }
+  };
+  type();
+}
 
-  // Typewriter for name
-  const nameEl=document.getElementById("displayNama");
-  if(nameEl){
-    const txt=nameEl.textContent;
-    nameEl.textContent="";
-    const cursor=document.createElement("span");
-    cursor.className="typewriter-cursor";nameEl.appendChild(cursor);
-    let i=0;
-    const type=()=>{
-      if(i<txt.length){nameEl.insertBefore(document.createTextNode(txt[i]),cursor);i++;setTimeout(type,60);}
-      else cursor.remove();
-    };
-    setTimeout(type,300);
+// Panel header typewriter
+function typewritePanels(){
+  document.querySelectorAll(".ph-txt").forEach((el,i)=>{
+    const txt=el.textContent;
+    if(!txt||el.dataset.typed==="1")return;
+    el.dataset.typed="1";
+    setTimeout(()=>typewrite(el,txt,40,null,false),i*120);
+  });
+}
+
+function animateProfileEntry(){
+  // STEP 1 — Avatar dramatic reveal (flash + scale)
+  const av=document.getElementById("avatarDisplay");
+  if(av){
+    av.classList.remove("revealed");
+    void av.offsetWidth;
+    av.classList.add("revealed");
+    // Flash the whole profile panel briefly
+    const heroPanel=av.closest(".panel");
+    if(heroPanel){
+      heroPanel.style.transition="box-shadow .1s";
+      heroPanel.style.boxShadow="0 0 60px rgba(168,85,247,.6),0 0 120px rgba(168,85,247,.3)";
+      setTimeout(()=>{heroPanel.style.boxShadow="";heroPanel.style.transition="";},600);
+    }
   }
 
-  // Stagger info cards
+  // STEP 2 — Title line appears
+  const titleEl=document.getElementById("displayTitleTxt");
+  if(titleEl){
+    const txt=titleEl.textContent;
+    setTimeout(()=>typewrite(titleEl,txt,35,null,true),200);
+  }
+
+  // STEP 3 — Name typewriter with sound (starts after title)
+  const nameEl=document.getElementById("displayNama");
+  if(nameEl){
+    const txt=nameEl.textContent||"HUNTER";
+    setTimeout(()=>typewrite(nameEl,txt,70,null,true),500);
+  }
+
+  // STEP 4 — Info cards slide in staggered
   document.querySelectorAll(".info-item").forEach((el,i)=>{
-    el.style.opacity="0";
-    setTimeout(()=>{el.classList.add("anim");el.style.opacity="";},200+i*80);
+    el.style.cssText="opacity:0;transform:translateX(-20px);transition:none;";
+    setTimeout(()=>{
+      el.style.transition="opacity .4s ease, transform .4s cubic-bezier(.25,.46,.45,.94)";
+      el.style.opacity="1";el.style.transform="translateX(0)";
+    },700+i*100);
   });
 
-  // Stat bars — reset then animate
+  // STEP 5 — Rank badge pop in
+  const badge=document.getElementById("rankBadge");
+  if(badge){
+    badge.style.cssText="transform:scale(0);opacity:0;transition:none;";
+    setTimeout(()=>{
+      badge.style.transition="transform .5s cubic-bezier(.34,1.56,.64,1), opacity .3s";
+      badge.style.transform="scale(1)";badge.style.opacity="1";
+    },900);
+  }
+
+  // STEP 6 — Stat bars fill up with stagger
   ["p-agama-bar","p-it-bar","p-dis-bar","p-akhlak-bar"].forEach((id,i)=>{
     const bar=document.getElementById(id);if(!bar)return;
-    const target=bar.style.width;
-    bar.style.width="0%";
-    setTimeout(()=>{bar.style.transition="width 1s cubic-bezier(.25,.46,.45,.94)";bar.style.width=target;},400+i*100);
+    const target=bar.style.width||"0%";
+    bar.style.cssText="width:0%;transition:none;";
+    setTimeout(()=>{
+      bar.style.transition="width 1.2s cubic-bezier(.25,.46,.45,.94)";
+      bar.style.width=target;
+    },1000+i*150);
   });
+
+  // STEP 7 — Motto typewriter (if exists)
+  const mottoEl=document.getElementById("displayMotto");
+  if(mottoEl&&mottoEl.textContent.length>2){
+    const txt=mottoEl.textContent;
+    setTimeout(()=>typewrite(mottoEl,txt,40,null,false),1400);
+  }
 }
 
 // E. PANEL ENTRY OBSERVER — animate panels as they appear
@@ -2447,6 +2564,8 @@ renderViolations();
 renderAch();
 renderBoss();
 checkAch();
+// Typewrite panel headers on load
+setTimeout(typewritePanels, 800);
 </script>
 </body>
 </html>
