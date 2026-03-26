@@ -2292,13 +2292,13 @@ function saveProfile(){
 
 // ── PAGE NAV ───────────────────────────────────
 function showPage(name){
+  LoadingBar.start();
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
   const page=document.getElementById("page-"+name);
   page.classList.add("active");
-  // Re-trigger animation
   page.style.animation="none";
-  page.offsetHeight; // force reflow
+  page.offsetHeight;
   page.style.animation="";
   document.getElementById("btn-"+name).classList.add("active");
   if(name==="profile")loadProfile();
@@ -2306,8 +2306,7 @@ function showPage(name){
   if(name==="charts")renderCharts();
   if(name==="map")renderMap();
   if(name==="settings"){renderDayGrid();renderDatesList();renderTodayStatus();renderHolidayBanner();renderHcal();}
-  // Typewrite panel headers on new page
-  setTimeout(typewritePanels, 200);
+  setTimeout(()=>LoadingBar.done(),300);
 }
 
 // ── KEYBOARD ───────────────────────────────────
@@ -2543,11 +2542,11 @@ function typewrite(el, txt, speed=60, onDone=null, withSound=true){
       ch.className="typewriter-char";
       ch.textContent=txt[i]==="\n"?" ":txt[i];
       el.insertBefore(ch,cursor);
-      if(withSound&&txt[i].trim()&&txt[i]!==" ")playSound("typekey");
+      if(withSound&&txt[i].trim()&&txt[i]!==" "&&i%2===0)playSound("typekey");
       i++;
       // Vary speed slightly for natural feel
-      const delay=txt[i-1]===" "?speed*.5:speed+(Math.random()*20-10);
-      setTimeout(type,Math.max(20,delay));
+      const delay=txt[i-1]===" "?speed*.8:speed+(Math.random()*30-10);
+      setTimeout(type,Math.max(40,delay));
     } else {
       // Remove cursor after short pause
       setTimeout(()=>{
@@ -2560,15 +2559,6 @@ function typewrite(el, txt, speed=60, onDone=null, withSound=true){
   type();
 }
 
-// Panel header typewriter
-function typewritePanels(){
-  document.querySelectorAll(".ph-txt").forEach((el,i)=>{
-    const txt=el.textContent;
-    if(!txt||el.dataset.typed==="1")return;
-    el.dataset.typed="1";
-    setTimeout(()=>typewrite(el,txt,40,null,false),i*120);
-  });
-}
 
 function animateProfileEntry(){
   // STEP 1 — Avatar dramatic reveal (flash + scale)
@@ -2590,14 +2580,14 @@ function animateProfileEntry(){
   const titleEl=document.getElementById("displayTitleTxt");
   if(titleEl){
     const txt=titleEl.textContent;
-    setTimeout(()=>typewrite(titleEl,txt,35,null,true),200);
+    setTimeout(()=>typewrite(titleEl,txt,85,null,true),200);
   }
 
   // STEP 3 — Name typewriter with sound (starts after title)
   const nameEl=document.getElementById("displayNama");
   if(nameEl){
     const txt=nameEl.textContent||"HUNTER";
-    setTimeout(()=>typewrite(nameEl,txt,70,null,true),500);
+    setTimeout(()=>typewrite(nameEl,txt,130,null,true),500);
   }
 
   // STEP 4 — Info cards slide in staggered
@@ -2634,7 +2624,7 @@ function animateProfileEntry(){
   const mottoEl=document.getElementById("displayMotto");
   if(mottoEl&&mottoEl.textContent.length>2){
     const txt=mottoEl.textContent;
-    setTimeout(()=>typewrite(mottoEl,txt,40,null,false),1400);
+    setTimeout(()=>typewrite(mottoEl,txt,75,null,false),1400);
   }
 }
 
@@ -2716,12 +2706,7 @@ function setStat(k,v){
   if(b)b.style.width=Math.min((v/50)*100,100)+"%";
 }
 
-// Patch showPage to show loading bar
-const _origShowPage=showPage;
-function showPage(name){
-  LoadingBar.start();
-  setTimeout(()=>{_origShowPage(name);LoadingBar.done();},120);
-}
+// LoadingBar integrated into showPage above
 
 // ══ CUSTOM TOOLTIP SYSTEM ════════════════════
 (function initTooltips(){
@@ -2752,8 +2737,7 @@ renderViolations();
 renderAch();
 renderBoss();
 checkAch();
-// Typewrite panel headers on load
-setTimeout(typewritePanels, 800);
+// Panel typewriter disabled — runs once at init only
 </script>
 </body>
 </html>
