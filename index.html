@@ -622,19 +622,131 @@ button:hover,.nav-btn:hover,.q-btn:hover,.save-btn:hover,.nm-save:hover,.aq-save
 .flash-q{animation:flash-q .45s ease;}
 
 /* RESPONSIVE */
+/* ══ TABLET (max 900px) ═══════════════════════ */
 @media(max-width:900px){
-  .dash-grid{grid-template-columns:1fr;padding:8px;}
+  .dash-grid{grid-template-columns:1fr;padding:10px;}
   .prof-content{grid-template-columns:1fr;}
   .cal-grid{grid-template-columns:1fr;}
   .prof-hero{flex-direction:column;align-items:center;text-align:center;}
-  .info-grid{grid-template-columns:1fr;}
+  .info-grid{grid-template-columns:1fr 1fr;}
   .top-sub{display:none;}
+  .chart-page>div[style]{grid-template-columns:1fr!important;}
 }
-@media(max-width:520px){
-  .nav-btn{padding:5px 9px;font-size:.58rem;}
-  .aq-row{grid-template-columns:1fr;}
-  .edit-form{grid-template-columns:1fr;}
-  .ach-grid{grid-template-columns:repeat(3,1fr);}
+
+/* ══ MOBILE (max 600px) ════════════════════════ */
+@media(max-width:600px){
+  /* FONT SIZES — bigger on mobile */
+  body{font-size:16px;}
+  .q-title{font-size:1rem!important;}
+  .q-desc{font-size:.78rem!important;}
+  .rtag{font-size:.62rem!important;padding:2px 8px!important;}
+  .q-countdown{font-size:.72rem!important;}
+  .ph-txt{font-size:.72rem!important;letter-spacing:2px!important;}
+  .stat-lbl{font-size:.68rem!important;}
+  .hunter-name{font-size:1.2rem!important;}
+  .lv-num{font-size:2.2rem!important;}
+  .exp-val{font-size:.82rem!important;}
+  .viol-btn .vi-name{font-size:.85rem!important;}
+  .viol-btn .vi-pen{font-size:.7rem!important;}
+  .ms-name{font-size:.88rem!important;}
+  .ms-lv{font-size:.65rem!important;}
+  .ach-name{font-size:.58rem!important;}
+  .ach-desc{font-size:.68rem!important;}
+
+  /* NAVBAR — bottom bar on mobile */
+  .top-bar{flex-direction:column;height:auto;padding:10px 14px 6px;}
+  .top-right{
+    position:fixed;bottom:0;left:0;right:0;z-index:2000;
+    background:linear-gradient(0deg,rgba(5,2,15,.99),rgba(13,7,32,.98));
+    border-top:1px solid var(--border-mid);
+    padding:8px 6px 10px;
+    display:flex!important;justify-content:space-around;gap:4px;
+    box-shadow:0 -4px 20px rgba(124,58,237,.2);}
+  .top-right::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,transparent,var(--purple),var(--ice),var(--purple),transparent);}
+  .nav-btn{
+    flex:1;padding:8px 4px!important;font-size:.52rem!important;
+    letter-spacing:1px!important;text-align:center;
+    display:flex;flex-direction:column;align-items:center;gap:3px;
+    border-radius:4px;min-width:0;}
+  .nav-btn .sl-icon{display:block!important;}
+  .sys-time,.spulse{display:none!important;}
+  /* Add bottom padding to content so it's not hidden by bottom nav */
+  .app{padding-bottom:64px;}
+  .footer{margin-bottom:64px;}
+
+  /* QUEST CARDS — more spacious touch targets */
+  .quest-card{padding:14px 12px!important;gap:12px!important;}
+  .q-icon{font-size:1.8rem!important;}
+  .q-btn{
+    padding:12px 16px!important;font-size:.7rem!important;
+    letter-spacing:1px!important;min-width:88px;}
+  .q-done,.q-failed-lbl{font-size:.72rem!important;}
+  .quest-list{gap:10px!important;padding:10px 10px!important;}
+  .q-rwds{gap:5px!important;}
+
+  /* PLAYER PANEL */
+  .avatar-box{width:70px!important;height:70px!important;}
+  .avatar-wrap{width:70px!important;height:70px!important;}
+
+  /* PROFILE */
+  .prof-hero{padding:16px!important;gap:14px!important;}
+  .av-big,.av-frame{width:110px!important;height:110px!important;}
+  .av-big span{font-size:3rem!important;}
+  .hunter-name-big{font-size:1.5rem!important;}
+  .info-grid{grid-template-columns:1fr!important;}
+  .info-val{font-size:.9rem!important;}
+  .info-label{font-size:.58rem!important;}
+  .edit-form{grid-template-columns:1fr!important;padding:12px!important;}
+  .form-input,.form-select,.form-textarea{font-size:.9rem!important;padding:10px!important;}
+  .save-btn{padding:14px!important;font-size:.7rem!important;}
+  .prof-content{padding:8px!important;}
+
+  /* VIOLATIONS — bigger touch targets */
+  .viol-btn{padding:12px 10px!important;}
+  .vi-ico{font-size:1.1rem!important;}
+
+  /* ACHIEVEMENTS */
+  .ach-grid{grid-template-columns:repeat(3,1fr)!important;gap:6px!important;padding:8px!important;}
+  .ach-icon{font-size:1.6rem!important;}
+
+  /* SETTINGS */
+  .settings-grid{grid-template-columns:1fr!important;}
+  .day-grid{grid-template-columns:repeat(7,1fr)!important;}
+  .day-btn{font-size:.6rem!important;padding:10px 2px!important;}
+
+  /* CALENDAR */
+  .hcal-day{font-size:.7rem!important;}
+  .cal-dnum{font-size:.7rem!important;}
+
+  /* DASH GRID padding */
+  .dash-grid{padding:8px 8px!important;}
+
+  /* MAP */
+  .map-page{padding:8px!important;}
+  .map-row{grid-template-columns:1fr 60px 1fr!important;}
+  .map-circle{width:60px!important;height:60px!important;}
+  .map-circle-lv{font-size:1.1rem!important;}
+  .map-card{padding:10px 12px!important;}
+  .map-card-name{font-size:.95rem!important;}
+
+  /* ADD QUEST FORM */
+  .aq-row{grid-template-columns:1fr!important;}
+  .aq-in,.aq-sel{font-size:.85rem!important;padding:10px!important;}
+
+  /* BOSS */
+  .boss-btn{padding:12px!important;font-size:.72rem!important;}
+
+  /* CHART */
+  .chart-page{padding:8px!important;}
+  .bar-lbl{font-size:.58rem!important;}
+
+  /* NOTIF box */
+  .sn-box{width:96%!important;}
+  .sn-header-title{font-size:1.1rem!important;}
+  .sn-text{font-size:.92rem!important;}
+  .sn-btn-yes,.sn-btn-no,.sn-btn-single{padding:14px!important;font-size:.88rem!important;}
 }
 
 /* ── SETTINGS PAGE ──────────────────────────── */
