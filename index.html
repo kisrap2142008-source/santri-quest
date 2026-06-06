@@ -1021,6 +1021,147 @@ button:hover,.nav-btn:hover,.q-btn:hover,.save-btn:hover,.nm-save:hover,.aq-save
   0%{transform:scale(1);}
   50%{transform:scale(1.5);}
   100%{transform:scale(1);}}
+
+/* ══ THEME SYSTEM ════════════════════════════ */
+[data-theme="blue"]{
+  --purple:#1d6fd6;--purple-light:#3b9af7;--purple-glow:#7ec8ff;
+  --border-mid:#1a3a6a;--border-dark:#0d1f3a;
+  --glow-purple:0 0 20px rgba(59,154,247,.7),0 0 40px rgba(29,111,214,.3);
+}
+[data-theme="red"]{
+  --purple:#c0392b;--purple-light:#e74c3c;--purple-glow:#ff7675;
+  --border-mid:#6a1a1a;--border-dark:#3a0d0d;
+  --glow-purple:0 0 20px rgba(231,76,60,.7),0 0 40px rgba(192,57,43,.3);
+}
+[data-theme="green"]{
+  --purple:#1a8a4a;--purple-light:#2ecc71;--purple-glow:#55efc4;
+  --border-mid:#1a4a2a;--border-dark:#0d2a14;
+  --glow-purple:0 0 20px rgba(46,204,113,.7),0 0 40px rgba(26,138,74,.3);
+}
+[data-theme="gold"]{
+  --purple:#b8860b;--purple-light:#f39c12;--purple-glow:#ffeaa7;
+  --border-mid:#4a3a0d;--border-dark:#2a200a;
+  --glow-purple:0 0 20px rgba(243,156,18,.7),0 0 40px rgba(184,134,11,.3);
+}
+
+/* Theme picker UI */
+.theme-picker{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.theme-dot{width:32px;height:32px;border-radius:50%;cursor:pointer;border:2px solid transparent;
+  transition:all .2s cubic-bezier(.34,1.56,.64,1);position:relative;}
+.theme-dot:hover{transform:scale(1.2);}
+.theme-dot.active{border-color:#fff;box-shadow:0 0 12px currentColor;}
+.theme-dot.active::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;
+  justify-content:center;color:#fff;font-size:.7rem;font-weight:bold;}
+
+/* ══ QUEST COMPLETE ANIMATION ════════════════ */
+@keyframes quest-clear{
+  0%{transform:scale(1);}
+  30%{transform:scale(1.03);box-shadow:0 0 30px rgba(74,222,128,.5);}
+  60%{transform:scale(.99);}
+  100%{transform:scale(1);box-shadow:none;}
+}
+.quest-card.just-done{animation:quest-clear .6s ease forwards;}
+
+@keyframes exp-burst{
+  0%{opacity:1;transform:translateY(0) scale(1);}
+  100%{opacity:0;transform:translateY(-50px) scale(1.5);}
+}
+.exp-burst{
+  position:fixed;font-family:'Share Tech Mono',monospace;font-weight:700;
+  color:var(--gold-bright);text-shadow:0 0 15px var(--gold);
+  pointer-events:none;z-index:9999;animation:exp-burst .9s ease forwards;}
+
+/* ══ TARGET HARIAN ════════════════════════════ */
+.target-bar-wrap{margin-top:8px;}
+.target-bar-bg{height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;margin-top:4px;}
+.target-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-bright));
+  border-radius:3px;transition:width .8s ease;}
+.target-bar-fill.achieved{background:linear-gradient(90deg,var(--emerge),#86efac);}
+.target-txt{font-family:'Share Tech Mono',monospace;font-size:.58rem;color:#c0b0d8;
+  display:flex;justify-content:space-between;margin-bottom:3px;}
+
+/* ══ AVATAR DEFAULTS ═════════════════════════ */
+.avatar-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0;}
+.avatar-opt{width:100%;aspect-ratio:1;background:rgba(124,58,237,.08);border:2px solid var(--border-mid);
+  border-radius:6px;display:flex;align-items:center;justify-content:center;
+  font-size:1.8rem;cursor:pointer;transition:all .2s;}
+.avatar-opt:hover{border-color:var(--purple);background:rgba(124,58,237,.2);transform:scale(1.08);}
+.avatar-opt.selected{border-color:var(--gold);box-shadow:var(--glow-gold);}
+
+/* ══ WEEKLY REPORT ════════════════════════════ */
+.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px;position:relative;z-index:2;}
+.report-card{background:rgba(124,58,237,.06);border:1px solid var(--border-dark);
+  border-left:2px solid var(--purple);padding:12px;
+  clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));}
+.report-num{font-family:'Black Han Sans',sans-serif;font-size:1.8rem;color:var(--gold-bright);
+  text-shadow:var(--glow-gold);line-height:1;}
+.report-lbl{font-family:'Share Tech Mono',monospace;font-size:.55rem;color:#9080b0;
+  letter-spacing:2px;margin-top:3px;}
+.report-grade{font-family:'Black Han Sans',sans-serif;font-size:3rem;text-align:center;
+  padding:16px;line-height:1;}
+.grade-S{color:var(--gold-bright);text-shadow:var(--glow-gold);}
+.grade-A{color:var(--emerge);text-shadow:var(--glow-green);}
+.grade-B{color:var(--ice);text-shadow:var(--glow-ice);}
+.grade-C{color:var(--purple-glow);text-shadow:var(--glow-purple);}
+.grade-D{color:var(--crimson-glow);text-shadow:var(--glow-red);}
+
+/* ══ EXPORT/IMPORT ════════════════════════════ */
+.export-btns{display:flex;gap:10px;padding:14px;position:relative;z-index:2;flex-wrap:wrap;}
+.exp-btn{flex:1;min-width:120px;background:rgba(124,58,237,.1);border:1px solid var(--purple);
+  color:#d4a0ff;font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:2px;
+  padding:11px;cursor:pointer;transition:all .2s;text-align:center;
+  clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));}
+.exp-btn:hover{background:rgba(124,58,237,.25);color:#fff;box-shadow:var(--glow-purple);}
+.exp-btn.import{background:rgba(74,222,128,.08);border-color:var(--emerge);color:var(--emerge);}
+.exp-btn.import:hover{background:rgba(74,222,128,.2);box-shadow:var(--glow-green);}
+.exp-btn.danger{background:rgba(220,38,38,.08);border-color:var(--crimson);color:var(--crimson-glow);}
+.exp-btn.danger:hover{background:rgba(220,38,38,.2);box-shadow:var(--glow-red);}
+
+/* ══ REMINDER BADGE ══════════════════════════ */
+.reminder-badge{
+  position:fixed;top:70px;right:16px;z-index:9990;
+  background:linear-gradient(135deg,rgba(220,38,38,.95),rgba(13,7,32,.98));
+  border:1px solid var(--crimson);color:#fff;
+  font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:1px;
+  padding:10px 16px;max-width:260px;
+  clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));
+  box-shadow:var(--glow-red);animation:slideInRight .3s ease;display:none;}
+.reminder-badge.show{display:block;}
+@keyframes slideInRight{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+.reminder-title{font-weight:700;color:var(--crimson-glow);font-size:.68rem;margin-bottom:3px;}
+.reminder-close{float:right;background:none;border:none;color:#fff;cursor:pointer;font-size:.8rem;opacity:.7;}
+
+/* ══ MAP INTERACTIVE ═════════════════════════ */
+.map-node{cursor:pointer;transition:all .2s;}
+.map-node:hover .map-circle{transform:scale(1.12);}
+.map-node:hover .map-card{box-shadow:0 0 20px rgba(124,58,237,.2);}
+.map-progress-wrap{padding:14px 16px 4px;position:relative;z-index:2;}
+.map-overall-bar{height:8px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden;margin-top:6px;}
+.map-overall-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--gold));
+  border-radius:4px;transition:width 1s ease;}
+
+/* ══ ANDROID RESPONSIVE ══════════════════════ */
+@media(max-width:480px){
+  /* Bigger touch targets */
+  .q-btn{min-height:44px!important;font-size:.75rem!important;}
+  .viol-btn{min-height:48px!important;}
+  .nav-btn{min-height:48px!important;padding:8px 4px!important;}
+  /* Stats */
+  .stat-row{gap:10px!important;}
+  .stat-trk{height:7px!important;}
+  /* Quest */
+  .quest-card{padding:14px 10px!important;}
+  .q-title{font-size:1rem!important;}
+  /* Boss */
+  .boss-card{padding:12px!important;}
+  /* Notif */
+  .sn-btns{padding:0 16px 20px!important;gap:10px!important;}
+  /* Level box */
+  .lv-box{padding:10px 12px!important;}
+  .lv-num{font-size:2.5rem!important;}
+  /* Report */
+  .report-grid{grid-template-columns:1fr!important;}
+}
 </style>
 </head>
 <body>
@@ -1032,6 +1173,12 @@ button:hover,.nav-btn:hover,.q-btn:hover,.save-btn:hover,.nm-save:hover,.aq-save
 <div class="scanlines"></div>
 <div class="vignette"></div>
 <div class="save-notif" id="saveNotif">✦ PROFILE UPDATED</div>
+<div class="reminder-badge" id="reminderBadge">
+  <button class="reminder-close" onclick="closeReminder()">✕</button>
+  <div class="reminder-title">⏰ DEADLINE ALERT!</div>
+  <div id="reminderText">Quest mau habis!</div>
+</div>
+<input type="file" id="importInput" accept=".json" style="display:none" onchange="importData(event)">
 
 <!-- NAME MODAL -->
 <div class="name-modal hidden" id="name-modal">
@@ -1261,6 +1408,13 @@ button:hover,.nav-btn:hover,.q-btn:hover,.save-btn:hover,.nm-save:hover,.aq-save
     <div class="map-page">
       <div class="panel">
         <div class="ph"><span class="ph-ico">🗺️</span><span class="ph-txt">Dungeon Progress Map</span><div class="ph-line"></div><span style="font-family:'Share Tech Mono',monospace;font-size:.58rem;color:var(--text-dim);margin-left:auto;" id="map-level-txt">—</span></div>
+        <div class="map-progress-wrap">
+          <div style="display:flex;justify-content:space-between;">
+            <span style="font-family:'Share Tech Mono',monospace;font-size:.58rem;color:#9080b0;">OVERALL PROGRESS</span>
+            <span style="font-family:'Share Tech Mono',monospace;font-size:.58rem;color:var(--gold-bright);" id="mapProgressTxt">0%</span>
+          </div>
+          <div class="map-overall-bar"><div class="map-overall-fill" id="mapProgressBar" style="width:0%"></div></div>
+        </div>
         <div class="map-wrap">
           <div class="map-path" id="map-path"></div>
         </div>
@@ -1369,6 +1523,10 @@ button:hover,.nav-btn:hover,.q-btn:hover,.save-btn:hover,.nm-save:hover,.aq-save
             <div class="foto-area form-group full" onclick="document.getElementById('fotoInput').click()">
               <div class="foto-sm" id="fotoSm"><span>⚔️</span></div>
               <div><div class="foto-title">⬆ UPLOAD FOTO PROFIL</div><div class="foto-sub">Klik di sini atau pada avatar di atas</div></div>
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Atau pilih avatar default:</label>
+              <div class="avatar-grid" id="avatarGrid"></div>
             </div>
             <div class="form-group"><label class="form-label">Nama Lengkap</label><input class="form-input" id="inputNama" type="text" placeholder="Nama..."></div>
             <div class="form-group"><label class="form-label">Umur</label><input class="form-input" id="inputUmur" type="number" min="1" max="99" placeholder="Umur"></div>
@@ -1512,6 +1670,54 @@ button:hover,.nav-btn:hover,.q-btn:hover,.save-btn:hover,.nm-save:hover,.aq-save
         <div style="padding:16px;position:relative;z-index:2;" id="today-status-wrap">
           <div style="font-family:'Share Tech Mono',monospace;font-size:.65rem;color:#c0b0d8;">Memuat...</div>
         </div>
+      </div>
+
+      <!-- THEME PICKER -->
+      <div class="panel" style="margin-top:4px;">
+        <div class="ph"><span class="ph-ico">🎨</span><span class="ph-txt">Tema Warna</span><div class="ph-line"></div></div>
+        <div class="set-section">
+          <div class="set-title">Pilih tema warna aplikasi:</div>
+          <div class="theme-picker">
+            <div class="theme-dot" data-theme="purple" style="background:linear-gradient(135deg,#7c3aed,#a855f7)" title="Ungu (Default)" onclick="setTheme('purple')"></div>
+            <div class="theme-dot" data-theme="blue"   style="background:linear-gradient(135deg,#1d6fd6,#3b9af7)" title="Biru" onclick="setTheme('blue')"></div>
+            <div class="theme-dot" data-theme="red"    style="background:linear-gradient(135deg,#c0392b,#e74c3c)" title="Merah" onclick="setTheme('red')"></div>
+            <div class="theme-dot" data-theme="green"  style="background:linear-gradient(135deg,#1a8a4a,#2ecc71)" title="Hijau" onclick="setTheme('green')"></div>
+            <div class="theme-dot" data-theme="gold"   style="background:linear-gradient(135deg,#b8860b,#f39c12)" title="Emas" onclick="setTheme('gold')"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TARGET HARIAN -->
+      <div class="panel" style="margin-top:4px;">
+        <div class="ph"><span class="ph-ico">🎯</span><span class="ph-txt">Target EXP Harian</span><div class="ph-line"></div></div>
+        <div class="set-section">
+          <div class="set-title">Set target EXP per hari:</div>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
+            <input class="date-in" type="number" id="targetInput" min="10" max="500" placeholder="misal: 100" style="flex:1;">
+            <button class="date-add-btn" onclick="saveTarget()">SIMPAN</button>
+          </div>
+          <div id="targetDisplay"></div>
+        </div>
+      </div>
+
+      <!-- EXPORT / IMPORT -->
+      <div class="panel" style="margin-top:4px;">
+        <div class="ph"><span class="ph-ico">📤</span><span class="ph-txt">Export / Import Data</span><div class="ph-line"></div></div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:#9080b0;padding:10px 14px 0;line-height:1.6;">
+          Export = simpan semua data ke file JSON (bisa dipindah ke perangkat lain)<br>
+          Import = muat data dari file JSON yang sudah di-export
+        </div>
+        <div class="export-btns">
+          <button class="exp-btn" onclick="exportData()">📤 EXPORT DATA</button>
+          <button class="exp-btn import" onclick="document.getElementById('importInput').click()">📥 IMPORT DATA</button>
+          <button class="exp-btn danger" onclick="resetAllData()">🗑 RESET SEMUA</button>
+        </div>
+      </div>
+
+      <!-- LAPORAN MINGGUAN -->
+      <div class="panel" style="margin-top:4px;">
+        <div class="ph"><span class="ph-ico">📊</span><span class="ph-txt">Laporan Mingguan</span><div class="ph-line"></div></div>
+        <div id="weeklyReport"></div>
       </div>
     </div>
   </div>
@@ -1900,8 +2106,10 @@ function renderPlayer(){
   setStat("agama",p.agama);setStat("it",p.it_skill);setStat("disiplin",p.disiplin);setStat("akhlak",p.akhlak);
   setMS(p.level);
   // Avatar
-  if(pro.foto)document.getElementById("dash-avatar").innerHTML=`<img src="${pro.foto}">`;
-  else document.getElementById("dash-avatar").innerHTML=`<span style="font-size:2.2rem">⚔️</span>`;
+  const av=document.getElementById("dash-avatar");
+  if(pro.foto)av.innerHTML=`<img src="${pro.foto}">`;
+  else if(pro.defaultAvatar)av.innerHTML=`<span style="font-size:2.2rem">${pro.defaultAvatar}</span>`;
+  else av.innerHTML=`<span style="font-size:2.2rem">⚔️</span>`;
 }
 function setStat(k,v){
   const b=document.getElementById(`stat-${k}-bar`),x=document.getElementById(`stat-${k}`);
@@ -2028,6 +2236,9 @@ function completeQ(id){
     },350);
   }
   playSound("complete");
+  // EXP burst animation
+  const btn=document.getElementById(`qc-${id}`)?.querySelector('.q-btn');
+  if(btn){const r=btn.getBoundingClientRect();showExpBurst(r.left+r.width/2,r.top,q.exp);}
   renderPlayer();
   // Quest complete notification — Solo Leveling style  
   const qTitle=q.title.replace(/<[^>]*>/g,"");
@@ -2379,6 +2590,7 @@ function loadProfile(){
   });
   // Trigger profile animations
   setTimeout(animateProfileEntry, 50);
+  renderAvatarGrid();
   document.getElementById("rankList").innerHTML=RANKS.map(rk=>`
     <div class="rank-row" style="opacity:${p.level>=rk.min&&p.level<=rk.max?1:.35}">
       <div class="rank-ico" style="color:${rk.c};border-color:${rk.c};${p.level>=rk.min&&p.level<=rk.max?`box-shadow:0 0 8px ${rk.c};background:${rk.c}22`:""}">${rk.l}</div>
@@ -2417,7 +2629,8 @@ function showPage(name){
   if(name==="calendar")renderCal();
   if(name==="charts")renderCharts();
   if(name==="map")renderMap();
-  if(name==="settings"){renderDayGrid();renderDatesList();renderTodayStatus();renderHolidayBanner();renderHcal();}
+  if(name==="settings"){renderDayGrid();renderDatesList();renderTodayStatus();renderHolidayBanner();renderHcal();renderWeeklyReport();renderTarget();}
+  if(name==="map"){updateMapProgress();}
   setTimeout(()=>LoadingBar.done(),300);
 }
 
@@ -2842,13 +3055,216 @@ function setStat(k,v){
   });
 })();
 
+// ══ THEME SYSTEM ═════════════════════════════
+const THEMES={purple:'',blue:'blue',red:'red',green:'green',gold:'gold'};
+function setTheme(t){
+  document.documentElement.setAttribute('data-theme',t==='purple'?'':t);
+  LS.s('sq3_theme',t);
+  document.querySelectorAll('.theme-dot').forEach(d=>{
+    d.classList.toggle('active',d.dataset.theme===t);
+  });
+}
+function loadTheme(){
+  const t=LS.g('sq3_theme','purple');
+  setTheme(t);
+}
+
+// ══ AVATAR DEFAULTS ══════════════════════════
+const DEFAULT_AVATARS=['⚔️','🗡️','🛡️','🏹','🔮','💎','👑','🌙','⚡','🔥','🌊','🌿','🦅','🐉','💀','🌟','🎯','🗺️','⚙️','🎮'];
+function renderAvatarGrid(){
+  const grid=document.getElementById('avatarGrid');if(!grid)return;
+  const prof=gPro();
+  grid.innerHTML=DEFAULT_AVATARS.map(a=>`
+    <div class="avatar-opt${prof.defaultAvatar===a?' selected':''}" onclick="selectDefaultAvatar('${a}')">${a}</div>
+  `).join('');
+}
+function selectDefaultAvatar(emoji){
+  const prof=gPro();prof.defaultAvatar=emoji;prof.foto='';sPro(prof);
+  fotoB64='';
+  document.getElementById('avatarDisplay').innerHTML=`<span>${emoji}</span>`;
+  document.getElementById('fotoSm').innerHTML=`<span>${emoji}</span>`;
+  renderPlayer();renderAvatarGrid();
+  playSound('complete');
+}
+
+// ══ TARGET HARIAN ════════════════════════════
+function getTarget(){return LS.g('sq3_target',{exp:100});}
+function saveTarget(){
+  const v=parseInt(document.getElementById('targetInput').value)||100;
+  LS.s('sq3_target',{exp:v});
+  renderTarget();playSound('complete');
+}
+function renderTarget(){
+  const wrap=document.getElementById('targetDisplay');if(!wrap)return;
+  const target=getTarget();
+  const p=gP();
+  const hist=gH();
+  const todayExp=hist[todayStr()]?.expGained||0;
+  const pct=Math.min(100,Math.round((todayExp/target.exp)*100));
+  const achieved=todayExp>=target.exp;
+  wrap.innerHTML=`
+    <div class="target-bar-wrap">
+      <div class="target-txt">
+        <span>EXP Hari Ini: <span style="color:var(--gold-bright)">${todayExp}</span> / ${target.exp}</span>
+        <span style="color:${achieved?'var(--emerge)':'#9080b0'}">${pct}% ${achieved?'✦ TERCAPAI!':''}</span>
+      </div>
+      <div class="target-bar-bg"><div class="target-bar-fill${achieved?' achieved':''}" style="width:${pct}%"></div></div>
+    </div>`;
+  document.getElementById('targetInput').value=target.exp;
+}
+
+// ══ EXPORT / IMPORT ══════════════════════════
+function exportData(){
+  const data={
+    player:gP(),profile:gPro(),stats:gSt(),
+    history:gH(),violations:gVio(),
+    quests:LS.g('sq3_quests',null),
+    settings:getSettings(),
+    target:getTarget(),
+    theme:LS.g('sq3_theme','purple'),
+    exportDate:new Date().toISOString(),
+    version:'3.0'
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`santri-quest-backup-${todayStr()}.json`;
+  a.click();URL.revokeObjectURL(url);
+  playSound('complete');
+  const n=document.getElementById('saveNotif');
+  n.textContent='✦ DATA BERHASIL DI-EXPORT';n.classList.add('show');
+  setTimeout(()=>{n.classList.remove('show');n.textContent='✦ PROFILE UPDATED';},2500);
+}
+function importData(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(!data.version)throw new Error('File tidak valid');
+      if(!confirm('Import akan mengganti semua data saat ini. Lanjutkan?'))return;
+      if(data.player)LS.s('sq3_player',data.player);
+      if(data.profile)LS.s('sq3_profile',data.profile);
+      if(data.stats)LS.s('sq3_stats',data.stats);
+      if(data.history)LS.s('sq3_history',data.history);
+      if(data.violations)LS.s('sq3_violations',data.violations);
+      if(data.quests)LS.s('sq3_quests',data.quests);
+      if(data.settings)LS.s('sq3_settings',data.settings);
+      if(data.target)LS.s('sq3_target',data.target);
+      if(data.theme)setTheme(data.theme);
+      playSound('levelup');
+      const n=document.getElementById('saveNotif');
+      n.textContent='✦ DATA BERHASIL DI-IMPORT';n.classList.add('show');
+      setTimeout(()=>{n.classList.remove('show');n.textContent='✦ PROFILE UPDATED';
+        location.reload();},1500);
+    }catch(err){alert('File tidak valid! Pastikan file JSON dari Santri Quest.');}
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+function resetAllData(){
+  if(!confirm('RESET semua data? Ini tidak bisa dibatalkan!'))return;
+  if(!confirm('Yakin? Semua progress akan hilang!'))return;
+  ['sq3_player','sq3_profile','sq3_stats','sq3_history','sq3_violations','sq3_quests','sq3_settings','sq3_target','sq3_boss'].forEach(k=>localStorage.removeItem(k));
+  playSound('penalty');location.reload();
+}
+
+// ══ LAPORAN MINGGUAN ═════════════════════════
+function renderWeeklyReport(){
+  const wrap=document.getElementById('weeklyReport');if(!wrap)return;
+  const hist=gH();
+  const days=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);
+    days.push(d.toISOString().slice(0,10));
+  }
+  const totalQ=days.reduce((s,d)=>s+(hist[d]?.quests?.length||0),0);
+  const totalExp=days.reduce((s,d)=>s+(hist[d]?.expGained||0),0);
+  const totalViol=days.reduce((s,d)=>s+(hist[d]?.violations?.length||0),0);
+  const activeDays=days.filter(d=>hist[d]?.quests?.length>0).length;
+  const avgQ=activeDays>0?Math.round(totalQ/activeDays):0;
+  // Grade
+  const score=(totalQ*10)+(activeDays*5)-(totalViol*3);
+  const grade=score>=200?'S':score>=150?'A':score>=100?'B':score>=50?'C':'D';
+  wrap.innerHTML=`
+    <div class="report-grid">
+      <div class="report-card"><div class="report-num">${totalQ}</div><div class="report-lbl">QUEST SELESAI</div></div>
+      <div class="report-card"><div class="report-num">${totalExp}</div><div class="report-lbl">TOTAL EXP</div></div>
+      <div class="report-card"><div class="report-num">${activeDays}/7</div><div class="report-lbl">HARI AKTIF</div></div>
+      <div class="report-card"><div class="report-num">${totalViol}</div><div class="report-lbl">VIOLATIONS</div></div>
+    </div>
+    <div style="text-align:center;padding:0 14px 14px;">
+      <div class="report-grade grade-${grade}">${grade}</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:#9080b0;letter-spacing:2px;">WEEKLY GRADE</div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.62rem;color:#c0b0d8;margin-top:6px;">
+        Rata-rata ${avgQ} quest/hari aktif
+      </div>
+    </div>`;
+}
+
+// ══ DEADLINE REMINDER ════════════════════════
+let _reminderShown=new Set();
+function checkReminders(){
+  if(isHolidayDate(todayStr()))return;
+  const now=new Date();
+  const quests=getQuests().filter(q=>!q.completed&&!q.failed);
+  quests.forEach(q=>{
+    const[dh,dm]=q.deadline.split(':').map(Number);
+    const t=new Date();t.setHours(dh,dm,0,0);
+    const diffMin=(t-now)/60000;
+    if(diffMin>0&&diffMin<=15&&!_reminderShown.has(q.id)){
+      _reminderShown.add(q.id);
+      showReminder(q.title,Math.round(diffMin));
+    }
+  });
+}
+function showReminder(title,menit){
+  const badge=document.getElementById('reminderBadge');
+  document.getElementById('reminderText').textContent=`"${title}" — ${menit} menit lagi!`;
+  badge.classList.add('show');
+  playSound('notif');
+  // Browser notification if allowed
+  if(Notification.permission==='granted'){
+    new Notification('⏰ Santri Quest',{body:`Quest "${title}" deadline ${menit} menit lagi!`,icon:''});
+  }
+  setTimeout(()=>badge.classList.remove('show'),8000);
+}
+function closeReminder(){document.getElementById('reminderBadge').classList.remove('show');}
+
+// Request notification permission
+if(Notification.permission==='default'){Notification.requestPermission();}
+
+// ══ QUEST COMPLETE ANIMATION ═════════════════
+function showExpBurst(x,y,exp){
+  const el=document.createElement('div');
+  el.className='exp-burst';
+  el.textContent=`+${exp} EXP`;
+  el.style.cssText=`left:${x}px;top:${y}px;font-size:1rem;`;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),1000);
+}
+
+// ══ MAP OVERALL PROGRESS ═════════════════════
+function updateMapProgress(){
+  const p=gP();
+  const pct=Math.min(100,Math.round(((p.level-1)/19)*100));
+  const bar=document.getElementById('mapProgressBar');
+  const txt=document.getElementById('mapProgressTxt');
+  if(bar)bar.style.width=pct+'%';
+  if(txt)txt.textContent=pct+'%';
+}
+
 // ── INIT ───────────────────────────────────────
+loadTheme();
 renderPlayer();
 renderQuests();
 renderViolations();
 renderAch();
 renderBoss();
 checkAch();
+// Start deadline reminder check every 60s
+setInterval(checkReminders,60000);
+checkReminders();
 // Panel typewriter disabled — runs once at init only
 </script>
 </body>
